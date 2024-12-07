@@ -9,4 +9,8 @@ resource "aws_instance" "my_instance" {
   tags = {
     Name = "MYEC2"
   }
+
+  lifecycle {
+    prevent_destroy = true  # Prevent accidental deletion of the instance
+  }
 }
