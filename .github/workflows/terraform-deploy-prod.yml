@@ -10,31 +10,97 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout the repository
         uses: actions/checkout@v2
 
+      # Step 2: Set up Terraform
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: "1.3.0"
 
+      # Step 3: Change directory to terraform
       - name: Change directory to terraform
         run: cd terraform
 
+      # Step 4: Initialize Terraform
       - name: Initialize Terraform
         working-directory: ./terraform
         run: terraform init
 
+      # Step 5: Plan Terraform deployment
       - name: Plan Terraform deployment
         working-directory: ./terraform
         run: terraform plan
         env:
-         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
+      # Step 6: Apply Terraform deployment
       - name: Apply Terraform deployment
         working-directory: ./terraform
         run: terraform apply -auto-approve
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      # Step 7: Fetch EC2 instance details (IP and ID)
+      - name: Get EC2 Public IP and Instance ID
+        id: ec2_instance
+        run: |
+          INSTANCE_IP=$(terraform output -raw public_ip)
+          INSTANCE_ID=$(terraform output -raw ec2_instance_id)
+          echo "::set-output name=public_ip::${INSTANCE_IP}"
+          echo "::set-output name=instance_id::${INSTANCE_ID}"
+
+      # Step 8: Create ZIP archive of the code
+      - name: Create ZIP archive of code
+        run: |
+          zip -r app.zip .  # Package the code into a ZIP file
+
+      # Step 9: Upload the ZIP to S3 for deployment
+      - name: Upload ZIP to S3
+        run: |
+          aws s3 cp app.zip s3://my-s3-bucket/app.zip
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: "us-west-2"  # Replace with your region
+
+      # Step 10: SSH into EC2 and deploy code
+      - name: Deploy code to EC2
+        run: |
+          PUBLIC_IP=${{ steps.ec2_instance.outputs.public_ip }}
+          
+          # SSH into EC2 instance, download the ZIP, and deploy it
+          ssh -o StrictHostKeyChecking=no -i ${{ secrets.EC2_SSH_PRIVATE_KEY }} ec2-user@${PUBLIC_IP} << EOF
+            # Download the ZIP file from S3
+            aws s3 cp s3://my-s3-bucket/app.zip /home/ec2-user/app.zip
+
+        
+            unzip -o /home/ec2-user/app.zip -d /home/ec2-user/app
+            sudo apt-get update -y
+
+            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+
+            cd /home/ubuntu/app/my-app
+
+
+            npm install
+
+          
+            npm run build
+
+          
+            sudo npm install -g pm2
+            pm2 delete all
+
+            
+            pm2 start npm --name "nextjs-app" -- start
+          EOF
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: "ap-south-1" 
