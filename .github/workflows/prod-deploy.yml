@@ -1,0 +1,59 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main  # Trigger only on push to main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Fetch EC2 Details from SSM (or Artifact)
+      - name: Fetch EC2 Instance Details
+        id: fetch_ec2_details
+        run: |
+          # Replace this with your chosen method (e.g., SSM, Secrets Manager, or artifacts)
+          INSTANCE_IP=$(aws ssm get-parameter --name "/prod/ec2/public_ip" --query "Parameter.Value" --output text)
+          echo "EC2 Public IP: $INSTANCE_IP"
+          echo "::set-output name=public_ip::$INSTANCE_IP"
+
+      # Step 3: Package the application code
+      - name: Create ZIP archive of code
+        run: zip -r app.zip .
+
+      # Step 4: Upload ZIP to S3 for deployment
+      - name: Upload ZIP to S3
+        run: |
+          aws s3 cp app.zip s3://my-s3-bucket/app.zip
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: "ap-south-1"
+
+      # Step 5: Deploy Application to EC2
+      - name: Deploy Application to EC2
+        run: |
+          PUBLIC_IP=${{ steps.fetch_ec2_details.outputs.public_ip }}
+          ssh -o StrictHostKeyChecking=no -i ${{ secrets.EC2_SSH_PRIVATE_KEY }} ec2-user@$PUBLIC_IP << EOF
+            # Download the ZIP file from S3
+            aws s3 cp s3://my-s3-bucket/app.zip /home/ec2-user/app.zip
+            unzip -o /home/ec2-user/app.zip -d /home/ec2-user/app
+            cd /home/ec2-user/app
+
+            # Install and build the application
+            npm install
+            npm run build
+
+            # Restart the application
+            pm2 delete all
+            pm2 start npm --name "nextjs-app" -- start
+          EOF
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
