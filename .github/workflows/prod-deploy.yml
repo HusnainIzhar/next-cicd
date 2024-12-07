@@ -10,44 +10,47 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
+      # Step 1: Checkout Code
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Step 2: Fetch EC2 Details from SSM (or Artifact)
+      # Step 2: Fetch EC2 Details (or Artifact)
       - name: Fetch EC2 Instance Details
         id: fetch_ec2_details
         run: |
-          # Set the region for AWS CLI
           AWS_REGION="ap-south-1"  # Specify your region here
           INSTANCE_IP=$(aws ssm get-parameter --name "/prod/ec2/public_ip" --query "Parameter.Value" --output text --region $AWS_REGION)
           echo "EC2 Public IP: $INSTANCE_IP"
           echo "::set-output name=public_ip::$INSTANCE_IP"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}  # Pass the secret to the environment
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  # Pass the secret to the environment
+          AWS_REGION: "ap-south-1"  # Specify the region here
 
-      # Step 3: Package the application code
-      - name: Create ZIP archive of code
+      # Step 3: Create ZIP Archive of Code
+      - name: Create ZIP Archive of Code
         run: zip -r app.zip .
 
-      # Step 4: Upload ZIP to S3 for deployment
+      # Step 4: Upload ZIP to S3
       - name: Upload ZIP to S3
         run: |
-          aws s3 cp app.zip s3://my-s3-bucket/app.zip --region ap-south-1  # Specify the region
+          aws s3 cp app.zip s3://my-s3-bucket/app.zip --region ap-south-1  # Specify region
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: "ap-south-1"  # Specify the region
+          AWS_REGION: "ap-south-1"  # Specify region here
 
-      # Step 5: Deploy Application to EC2
+      # Step 5: Deploy to EC2 Instance
       - name: Deploy Application to EC2
         run: |
           PUBLIC_IP=${{ steps.fetch_ec2_details.outputs.public_ip }}
           ssh -o StrictHostKeyChecking=no -i ${{ secrets.EC2_SSH_PRIVATE_KEY }} ec2-user@$PUBLIC_IP << EOF
             # Download the ZIP file from S3
-            aws s3 cp s3://my-s3-bucket/app.zip /home/ec2-user/app.zip --region ap-south-1  # Specify the region
+            aws s3 cp s3://my-s3-bucket/app.zip /home/ec2-user/app.zip --region ap-south-1
             unzip -o /home/ec2-user/app.zip -d /home/ec2-user/app
             cd /home/ec2-user/app
 
-            # Install and build the application
+            # Install dependencies and build the app
             npm install
             npm run build
 
@@ -58,4 +61,4 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: "ap-south-1"  # Specify the region
+          AWS_REGION: "ap-south-1"  # Specify region here
