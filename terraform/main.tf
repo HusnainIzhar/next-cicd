@@ -23,6 +23,6 @@ resource "aws_instance" "myserver" {
   instance_type = "t3.nano"
 
   tags = {
-    Name = "SampleServer"
+    Name = "myserver"
   }
 }
