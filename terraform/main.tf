@@ -24,7 +24,7 @@ resource "aws_instance" "MyServer" {
    key_name      = "key"
 
   tags = {
-    Name = "myserver1"
+    Name = "myserver"
   }
 }
 
