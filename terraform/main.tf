@@ -27,3 +27,7 @@ resource "aws_instance" "MyServer" {
     Name = "myserver2"
   }
 }
+
+output "ec2_public_dns" {
+  value = aws_instance.MyServer.public_dns
+}
