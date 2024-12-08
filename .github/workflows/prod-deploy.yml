@@ -16,9 +16,9 @@ jobs:
         id: check_terraform_running
         run: |
           echo "Checking if Terraform Infrastructure workflow is running..."
-          # Use the GitHub CLI to list the workflow runs
-          IAC_RUNNING=$(gh run list --workflow="Terraform Infrastructure" --status "in-progress" --json status --jq '. | length')
+          IAC_RUNNING=$(gh run list --workflow="Terraform Infrastructure" --status in_progress --json status --jq '. | length')
           echo "IAC_RUNNING=${IAC_RUNNING}" >> $GITHUB_ENV
+
 
   deploy:
     name: Push to EC2
