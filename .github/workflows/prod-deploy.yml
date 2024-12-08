@@ -20,19 +20,15 @@ jobs:
           terraform_version: "1.6.0"  # Specify your Terraform version
 
       - name: Terraform Init and Apply
-        working-directory: ./terraform
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           terraform init
           terraform apply -auto-approve
 
-          - name: Get EC2 Public DNS from Terraform output
-          id: get_dns
-          run: |
-            echo "EC2_PUBLIC_DNS=$(terraform output -raw ec2_public_dns)" >> $GITHUB_ENV
-        
+      - name: Get EC2 Public DNS from Terraform output
+        id: get_dns
+        run: |
+          echo "EC2_PUBLIC_DNS=$(terraform output -raw ec2_public_dns)" >> $GITHUB_ENV
+          echo "EC2_PUBLIC_DNS=${{ env.EC2_PUBLIC_DNS }}"  # Debugging step
 
       - name: Deploy to EC2 instance
         uses: easingthemes/ssh-deploy@v2.1.5
