@@ -28,14 +28,14 @@ jobs:
           terraform init
           terraform apply -auto-approve
 
-          - name: Get EC2 Public DNS from Terraform output
-          id: get_dns
-          run: |
-            echo "EC2_PUBLIC_DNS=$(terraform output -raw ec2_public_dns)" >> $GITHUB_ENV
-  
+      - name: Get EC2 Public DNS from Terraform output
+        id: get_dns
+        run: |
+          echo "EC2_PUBLIC_DNS=$(terraform output -raw ec2_public_dns)" >> $GITHUB_ENV
+
       - name: Debug EC2 Public DNS
         run: |
-            echo "EC2 Public DNS: ${{ env.EC2_PUBLIC_DNS }}"
+          echo "EC2 Public DNS: ${{ env.EC2_PUBLIC_DNS }}"
 
       # Add your deployment or SSH steps here
       - name: Deploy to EC2 instance
