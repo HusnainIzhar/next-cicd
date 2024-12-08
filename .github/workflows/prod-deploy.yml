@@ -15,6 +15,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Fetch Terraform Output from Remote State (S3)
+        working-directory: ./terraform
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
