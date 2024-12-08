@@ -36,14 +36,14 @@ jobs:
         env:
            SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
            SOURCE: "./"
-           REMOTE_HOST: ${{ env.EC2_PUBLIC_DNS}}
+           REMOTE_HOST: "ec2-65-2-123-8.ap-south-1.compute.amazonaws.com"
            REMOTE_USER: ${{ secrets.USERNAME }}
            TARGET: ${{ secrets.TARGET_DIR }}
 
       - name: Execute remote SSH commands
         uses: appleboy/ssh-action@master
         with:
-           host: ${{ env.EC2_PUBLIC_DNS }}
+           host: "ec2-65-2-123-8.ap-south-1.compute.amazonaws.com"
            username: ${{ secrets.USERNAME }}
            key: ${{ secrets.EC2_SSH_KEY }}
            script: |
