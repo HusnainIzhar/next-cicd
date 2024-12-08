@@ -6,7 +6,7 @@ on:
       - main
 
 concurrency:
-  group: terraform-lock
+  group: other-jobs
   cancel-in-progress: false
 
 jobs:
