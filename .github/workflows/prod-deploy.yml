@@ -1,47 +1,62 @@
-# name: Terraform Deploy to Production
+name: Terraform Deploy to Production
 
-# on:
-#   push:
-#     branches:
-#       - main
+on:
+  push:
+    branches:
+      - main
 
-# jobs:
-#   terraform:
-#     runs-on: ubuntu-latest
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
 
-#     steps:
-#       - name: Checkout Code
-#         uses: actions/checkout@v2
+    steps:
+      # Step 1: Checkout Code
+      - name: Checkout Code
+        uses: actions/checkout@v2
 
-#       - name: Set up Terraform
-#         uses: hashicorp/setup-terraform@v2
+      # Step 2: Set Up AWS CLI
+      - name: Configure AWS CLI
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set region ap-south-1
 
-#       - name: Terraform Init
-#         working-directory: ./terraform
-#         run: terraform init
+      # Step 3: Fetch EC2 Public IP
+      - name: Get EC2 Public IP
+        id: get_ip
+        run: |
+          PUBLIC_IP=$(aws ec2 describe-instances \
+            --filters "Name=tag:Name,Values=myserver" \
+            --query "Reservations[0].Instances[0].PublicIpAddress" \
+            --output text)
+          echo "EC2_PUBLIC_IP=$PUBLIC_IP" >> $GITHUB_ENV
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-#       - name: Terraform Plan
-#         working-directory: ./terraform
-#         run: terraform plan
-#         env:
-#           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      # Step 4: Copy Files to EC2
+      - name: Copy Files to EC2
+        uses: appleboy/scp-action@v0.1.0
+        with:
+          host: ${{ env.EC2_PUBLIC_IP }}
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "./" # Adjust this to the folder you want to copy
+          target: "/home/ubuntu/app" # Path on EC2 instance
 
-
-#       - name: Terraform Apply
-#         working-directory: ./terraform
-#         run: terraform apply -auto-approve
-#         env:
-#           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-
-#       - name: Deploy to EC2
-#         run: |
-#           ssh -o StrictHostKeyChecking=no -i ${{ secrets.EC2_SSH_PRIVATE_KEY }} ec2-user@${{ steps.ec2_instance.outputs.public_ip }} << EOF
-#             git clone https://github.com/your-repo/your-app.git
-#             cd your-app
-#             npm install
-#             npm run build
-#             pm2 start npm --name "your-app" -- start
-#           EOF
+      # Step 5: Deploy and Run Commands on EC2
+      - name: Install Dependencies and Start App
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ env.EC2_PUBLIC_IP }}
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/ubuntu/app
+            # Install Node.js if not already installed
+            sudo apt-get update -y
+            sudo apt-get install -y nodejs npm
+            # Install app dependencies
+            npm install
+            # Start the app (replace 'npm start' with your app's command if needed)
+            npm start
