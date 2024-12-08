@@ -20,6 +20,7 @@ jobs:
           terraform_version: "1.6.0"  # Specify your Terraform version
 
       - name: Terraform Init and Apply
+        working-directory: ./terraform
         run: |
           terraform init
           terraform apply -auto-approve
