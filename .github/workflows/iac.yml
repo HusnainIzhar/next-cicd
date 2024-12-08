@@ -6,10 +6,6 @@ on:
       - '**.tf'
       - '**.tfvars'
 
-concurrency:
-  group: terraform-lock
-  cancel-in-progress: true
-
 
 jobs:
   terraform:

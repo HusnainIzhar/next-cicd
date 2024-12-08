@@ -4,10 +4,11 @@ on:
   push:
     branches:
       - main
-
-concurrency:
-  group: other-jobs
-  cancel-in-progress: false
+  workflow_run:
+    workflows:
+      - 'Terraform Infrastructure'
+    types:
+      - completed
 
 jobs:
   deploy:
