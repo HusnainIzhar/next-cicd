@@ -11,20 +11,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout the code
       - name: Checkout the code
         uses: actions/checkout@v2
 
+      # Step 2: Set up Terraform
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: "1.6.0"  # Specify your Terraform version
-      
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-            terraform_wrapper: false
-        
-
+          
+      # Step 3: Terraform Init and Apply
       - name: Terraform Init and Apply
         working-directory: ./terraform
         env:
@@ -32,14 +29,13 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           terraform init
-
           terraform apply -auto-approve
-          
+
+          # Get EC2 public DNS from Terraform output
           EC2_PUBLIC_DNS=$(terraform output -raw ec2_public_dns)
-          echo "EC2_PUBLIC_DNS=$(EC2_PUBLIC_DNS)" >> $GITHUB_ENV
-      
-  
-      # Add your deployment or SSH steps here
+          echo "EC2_PUBLIC_DNS=${EC2_PUBLIC_DNS}" >> $GITHUB_ENV
+
+      # Step 4: Deploy to EC2 instance
       - name: Deploy to EC2 instance
         uses: easingthemes/ssh-deploy@v2.1.5
         env:
@@ -49,6 +45,7 @@ jobs:
           REMOTE_USER: ${{ secrets.USERNAME }}
           TARGET: ${{ secrets.TARGET_DIR }}
 
+      # Step 5: Execute remote SSH commands
       - name: Execute remote SSH commands
         uses: appleboy/ssh-action@master
         with:
