@@ -1,4 +1,4 @@
-name: Terraform Deploy to Production
+name: Deploy to EC2
 
 on:
   push:
@@ -6,57 +6,31 @@ on:
       - main
 
 jobs:
-  terraform:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout Code
-      - name: Checkout Code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      # Step 2: Set Up AWS CLI
-      - name: Configure AWS CLI
+      - name: Set up SSH key
         run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set region ap-south-1
-
-      # Step 3: Fetch EC2 Public IP
-      - name: Get EC2 Public IP
-        id: get_ip
-        run: |
-          PUBLIC_IP=$(aws ec2 describe-instances \
-            --filters "Name=tag:Name,Values=myserver" \
-            --query "Reservations[0].Instances[0].PublicIpAddress" \
-            --output text)
-          echo "EC2_PUBLIC_IP=$PUBLIC_IP" >> $GITHUB_ENV
+          mkdir -p ~/.ssh
+          echo "$EC2_SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
 
-      # Step 4: Copy Files to EC2
-      - name: Copy Files to EC2
+      - name: Add the SSH host to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.EC2_PUBLIC_IP }} >> ~/.ssh/known_hosts
+
+      - name: Deploy with SCP
         uses: appleboy/scp-action@v0.1.0
         with:
-          host: ${{ env.EC2_PUBLIC_IP }}
-          username: ubuntu
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "./" # Adjust this to the folder you want to copy
-          target: "/home/ubuntu/app" # Path on EC2 instance
-
-      # Step 5: Deploy and Run Commands on EC2
-      - name: Install Dependencies and Start App
-        uses: appleboy/ssh-action@v0.1.8
-        with:
-          host: ${{ env.EC2_PUBLIC_IP }}
-          username: ubuntu
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd /home/ubuntu/app
-            # Install Node.js if not already installed
-            sudo apt-get update -y
-            sudo apt-get install -y nodejs npm
-            # Install app dependenciesf
-            npm install
-            # Start the app (replace 'npm start' with your app's command if needed)
-            npm start
+          host: ${{ secrets.EC2_PUBLIC_IP }}  # Ensure this is the correct public IP of your EC2 instance
+          username: ec2-user  # Ensure this matches the correct username for your instance
+          key: ${{ secrets.EC2_SSH_KEY }}  # Use the secret key stored in GitHub Secrets
+          source: "./your-local-directory/*"
+          target: "/remote/directory"
