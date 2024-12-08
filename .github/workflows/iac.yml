@@ -51,9 +51,4 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      # Step 7: Upload Terraform Plan as Artifact
-      - name: Upload Terraform Plan
-        uses: actions/upload-artifact@v3
-        with:
-          name: tfplan
-          path: ./terraform/tfplan
+    
