@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+      
+concurrency:
+  group: terraform-lock
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -22,10 +26,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Terraform Init and Apply
-        if: |
-          github.event_name != 'workflow_run' || 
-          (github.event.workflow != 'iac.yml')
+      - name: Terraform Output 
           
         working-directory: ./terraform
         env:
