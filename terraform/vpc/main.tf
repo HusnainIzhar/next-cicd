@@ -7,7 +7,7 @@ terraform {
     }
   }
   backend "s3" {
-    bucket = "mybucketvpc"
+    bucket = "mybucket12vpc"
     key    = "backend.tfstate"
     region = "ap-south-1"
   }
