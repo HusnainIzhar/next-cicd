@@ -46,15 +46,16 @@ jobs:
           DNS=$(terraform output -raw ec2_public_dns)
           echo "DNS=$DNS" >> $GITHUB_ENV
 
-      - name: Deploy to EC2 instance
-        uses: easingthemes/ssh-deploy@v2.1.5
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-          SOURCE: "./"
-          REMOTE_HOST: ${{ env.DNS }}
-          REMOTE_USER: ${{ secrets.USERNAME }}
-          TARGET: ${{ secrets.TARGET_DIR }}
-          EXCLUDE: ".git/* terraform/*"
+        - name: Deploy via SSH
+          uses: easingthemes/ssh-deploy@v2.1.5
+          with:
+            SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
+            REMOTE_HOST: ec2-3-110-217-136.ap-south-1.compute.amazonaws.com
+            REMOTE_USER: ubuntu
+            REMOTE_PATH: /var/www/project
+            SOURCE: ./
+            args: "-avz --progress -e 'ssh -o StrictHostKeyChecking=no -vvv'"
+        
 
       - name: Execute remote SSH commands
         uses: appleboy/ssh-action@master
