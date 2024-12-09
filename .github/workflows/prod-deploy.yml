@@ -51,7 +51,7 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
           SOURCE: "./"
-          REMOTE_HOST: "ec2-3-110-217-136.ap-south-1.compute.amazonaws.com"
+          REMOTE_HOST: ${{ env.EC2_PUBLIC_DNS }}
           REMOTE_USER: ${{ secrets.USERNAME }}
           TARGET: ${{ secrets.TARGET_DIR }}
           EXCLUDE: ".git/* terraform/*"
