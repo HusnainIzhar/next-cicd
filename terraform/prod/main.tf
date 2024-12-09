@@ -71,13 +71,13 @@ resource "aws_security_group" "MyServerSG" {
 resource "aws_instance" "MyServer" {
   ami           = "ami-053b12d3152c0cc71"
   instance_type = "t2.micro"
-  key_name      = "secret"
+  key_name      = "secrett"
 
   # Associate the security group with the instance
   vpc_security_group_ids = [aws_security_group.MyServerSG.id]
 
   tags = {
-    Name = "server1"
+    Name = "server"
   }
 }
 
