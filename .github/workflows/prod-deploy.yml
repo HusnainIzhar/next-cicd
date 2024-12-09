@@ -49,10 +49,11 @@ jobs:
         # Step 5: Conditionally Apply Terraform Plan
       - name: Apply with Approval
         working-directory: ./terraform
-        run: terraform apply -auto-approve tfplan
-        
-             DNS=$(terraform output -raw ec2_public_dns)
-             echo "EC2_PUBLIC_DNS=$DNS" >> $GITHUB_ENV
+        run: |
+            terraform init
+            terraform apply -auto-approve
+            DNS=$(terraform output -raw ec2_public_dns)
+            echo "EC2_PUBLIC_DNS=$DNS" >> $GITHUB_ENV
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
