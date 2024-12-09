@@ -20,14 +20,38 @@ provider "aws" {
 # Define the security group
 resource "aws_security_group" "MyServerSG" {
   name        = "MyServerSecurityGroup"
-  description = "Allow SSH access"
+  description = "Allow SSH, HTTP, HTTPS, and port 3000 access"
 
-  # Ingress rule for SSH
+  # Ingress rule for SSH (port 22)
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"] # Replace with your IP for better security
+  }
+
+  # Ingress rule for HTTP (port 80)
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Ingress rule for HTTPS (port 443)
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Ingress rule for application on port 3000
+  ingress {
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   # Egress rule to allow all outbound traffic
@@ -53,7 +77,7 @@ resource "aws_instance" "MyServer" {
   vpc_security_group_ids = [aws_security_group.MyServerSG.id]
 
   tags = {
-    Name = "server"
+    Name = "server1"
   }
 }
 
