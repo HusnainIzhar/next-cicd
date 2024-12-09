@@ -82,6 +82,13 @@ resource "aws_instance" "MyServer" {
   }
 }
 
+# Create Elastic IP
+resource "aws_eip" "my_eip" {
+  instance = aws_instance.MyServer.id
+}
+
+
+# Output EC2 Instance Public DNS
 output "ec2_public_dns" {
   value = aws_instance.MyServer.public_dns
 }
