@@ -21,7 +21,7 @@ provider "aws" {
 resource "aws_instance" "MyServer" {
   ami           = "ami-053b12d3152c0cc71"
   instance_type = "t2.micro"
-   key_name      = "secret"
+   key_name      = "secret1"
 
   tags = {
     Name = "server"
