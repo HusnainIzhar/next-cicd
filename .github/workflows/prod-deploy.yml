@@ -5,10 +5,6 @@ on:
     branches:
       - main
 
-concurrency:
-  group: "prod-deploy"
-  cancel-in-progress: true
-
 jobs:
   deploy:
     name: Push to EC2 Prod
@@ -18,57 +14,68 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
       - name: Checkout the code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
-      - name: Download EC2 DNS Artifact
-        uses: actions/download-artifact@v3
+      # Step 1: Set up Terraform
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
         with:
-          name: ec2-dns-output
+          terraform_version: 1.3.0
+          terraform_wrapper: false
 
-      - name: Set EC2 Public DNS as Env Variable
+      # Step 2: Initialize Terraform
+      - name: Initialize Terraform
+        working-directory: ./terraform/prod
+        run: terraform init
+
+      # Step 3: Validate Terraform
+      - name: Terraform Validate
+        working-directory: ./terraform/prod
+        run: terraform validate
+
+      # Step 4: Generate Terraform Plan
+      - name: Terraform Plan
+        working-directory: ./terraform/prod
+        run: terraform plan -out=tfplan
+
+      # Step 5: Apply Terraform Plan
+      - name: Apply with Approval
+        working-directory: ./terraform/prod
         run: |
-          EC2_PUBLIC_DNS=$(cat ec2_dns.txt)
-          echo "DNS=$EC2_PUBLIC_DNS" >> $GITHUB_ENV
+          terraform apply -auto-approve tfplan
+          DNS=$(terraform output -raw ec2_public_dns)
+          echo "EC2_PUBLIC_DNS=$DNS" >> $GITHUB_ENV
 
-
-      # Step 6: Deploy Files to the Server
-      - name: Deploy to Server
+      # Step 6: Deploy to EC2 instance
+      - name: Deploy to EC2 instance
         uses: easingthemes/ssh-deploy@v2.1.5
-        with:
+        env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-          ARGS: "-rlgoDzvc --delete"
           SOURCE: "./my-app"
-          REMOTE_HOST: ${{ env.DNS }}
+          REMOTE_HOST: ${{ env.EC2_PUBLIC_DNS }}
           REMOTE_USER: ${{ secrets.USERNAME }}
           TARGET: ${{ secrets.TARGET_DIR }}
 
-      # Step 7: Execute Remote SSH Commands
       - name: Execute remote SSH commands
-        uses: appleboy/ssh-action@v0.1.5
+        uses: appleboy/ssh-action@master
         with:
-          host: ${{ env.DNS }}
+          host: ${{ env.EC2_PUBLIC_DNS }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # Update system packages
             sudo apt-get update -y
 
-            # Install Node.js and npm
             curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
             sudo apt-get install -y nodejs
 
-            # Navigate to the project directory
             cd /home/ubuntu/app/my-app
 
-            # Install project dependencies
             npm install
 
-            # Build the Next.js project
             npm run build
 
-            # Install PM2 globally
             sudo npm install -g pm2
+
             pm2 delete all
 
-            # Start the Next.js app with PM2
             pm2 start npm --name "nextjs-app" -- start
