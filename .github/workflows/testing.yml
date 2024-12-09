@@ -43,8 +43,8 @@ jobs:
         working-directory: ./terraform/vpc
         run: |
           terraform apply -auto-approve tfplan
-          DNS=$(terraform output -raw ec2_public_dns)
-          echo "EC2_PUBLIC_DNS=$DNS" >> $GITHUB_ENV
+          IP=$(terraform output -raw ec2_public_ip)
+          echo "EC2_IP=$IP" >> $GITHUB_ENV
 
       # Step 6: Deploy to EC2 instance
       - name: Deploy to EC2 instance
@@ -52,14 +52,14 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
           SOURCE: "./"
-          REMOTE_HOST: ${{ env.EC2_PUBLIC_DNS }}
+          REMOTE_HOST: ${{ env.EC2_IP }}
           REMOTE_USER: ${{ secrets.USERNAME }}
           TARGET: ${{ secrets.TARGET_DIR }}
 
       - name: Execute remote SSH commands
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ env.EC2_PUBLIC_DNS }}
+          host: ${{ env.EC2_IP }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
