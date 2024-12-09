@@ -45,54 +45,46 @@ jobs:
           terraform apply -auto-approve tfplan
           DNS=$(terraform output -raw ec2_public_dns)
           echo "DNS=$DNS" >> $GITHUB_ENV
-          echo DNS
 
+      # Step 6: Deploy Files to the Server
       - name: Deploy to Server
-          uses: easingthemes/ssh-deploy@main
-          with:
-              SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-              ARGS: "-rlgoDzvc -i --delete"
-              SOURCE: "./"
-              REMOTE_HOST: ${{ env.DNS }}
-              REMOTE_USER: ${{ secrets.USERNAME }}
-              TARGET: ${{ secrets.TARGET_DIR }}
-              EXCLUDE: "/dist/, /node_modules/, ./git/ ./terraform/, "    
-      # - name: Deploy to EC2 instance
-      #   uses: easingthemes/ssh-deploy@v5.1.0
-      #   env:
-      #     SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-      #     SOURCE: "./"
-      #     REMOTE_HOST: ${{ env.DNS }}
-      #     REMOTE_USER: ${{ secrets.USERNAME }}
-      #     TARGET: ${{ secrets.TARGET_DIR }}
-      #     EXCLUDE: ".git/* terraform/*"
+        uses: easingthemes/ssh-deploy@main
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          ARGS: "-rlgoDzvc --delete"
+          SOURCE: "./"
+          REMOTE_HOST: ${{ env.DNS }}
+          REMOTE_USER: ${{ secrets.USERNAME }}
+          TARGET: ${{ secrets.TARGET_DIR }}
+          EXCLUDE: ".git/,node_modules/,./terraform/"
 
+      # Step 7: Execute Remote SSH Commands
       - name: Execute remote SSH commands
         uses: appleboy/ssh-action@master
         with:
-           host: ${{ env.DNS }}
-           username: ${{ secrets.USERNAME }}
-           key: ${{ secrets.EC2_SSH_KEY }}
-           script: |
-             # Update system packages
-             sudo apt-get update -y
+          host: ${{ env.DNS }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # Update system packages
+            sudo apt-get update -y
 
-             # Install Node.js and npm
-             curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-             sudo apt-get install -y nodejs
+            # Install Node.js and npm
+            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+            sudo apt-get install -y nodejs
 
-             # Navigate to the project directory
-             cd /home/ubuntu/app/my-app
+            # Navigate to the project directory
+            cd /home/ubuntu/app/my-app
 
-             # Install project dependencies
-             npm install
+            # Install project dependencies
+            npm install
 
-             # Build the Next.js project
-             npm run build
+            # Build the Next.js project
+            npm run build
 
-             # Install PM2 globally
-             sudo npm install -g pm2
-             pm2 delete all
+            # Install PM2 globally
+            sudo npm install -g pm2
+            pm2 delete all
 
-              # Start the Next.js app with PM2
-             pm2 start npm --name "nextjs-app" -- start
+            # Start the Next.js app with PM2
+            pm2 start npm --name "nextjs-app" -- start
