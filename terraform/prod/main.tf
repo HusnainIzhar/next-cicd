@@ -25,7 +25,7 @@ resource "aws_instance" "MyServer" {
   key_name      = "secret"
 
   tags = {
-    Name = "myserver"
+    Name = "my"
   }
 }
 output "ec2_public_dns" {
