@@ -20,10 +20,15 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v3
 
-      - name: Save EC2 DNS to Env
+      - name: Download EC2 DNS Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ec2-dns-output
+
+      - name: Set EC2 Public DNS as Env Variable
         run: |
-              DNS=$(cat ./terraform/prod/ec2_dns.txt)
-              echo "EC2_DNS=$DNS" >> $GITHUB_ENV
+          EC2_PUBLIC_DNS=$(cat ec2_dns.txt)
+          echo "DNS=$EC2_PUBLIC_DNS" >> $GITHUB_ENV
 
 
       # Step 6: Deploy Files to the Server

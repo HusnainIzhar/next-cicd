@@ -50,3 +50,9 @@ jobs:
         run: |
           terraform apply -auto-approve tfplan
           terraform output -raw ec2_public_dns > ./ec2_dns.txt
+
+      - name: Upload EC2 DNS as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ec2-dns-output
+          path: ./ec2_dns.txt
