@@ -87,8 +87,7 @@ resource "aws_eip" "my_eip" {
   instance = aws_instance.MyServer.id
 }
 
-
-# Output Elastic IP
+# Output Elastic IP .
 output "ec2_public_ip" {
   value = aws_eip.my_eip.public_ip
 }
