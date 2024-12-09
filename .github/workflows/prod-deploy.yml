@@ -46,14 +46,20 @@ jobs:
           DNS=$(terraform output -raw ec2_public_dns)
           echo "EC2_PUBLIC_DNS=$DNS" >> $GITHUB_ENV
 
-      - name: Deploy to EC2 instance
-        uses: easingthemes/ssh-deploy@v2.1.5
-        env:
-           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-           SOURCE: "./"
-           REMOTE_HOST: ${{ env.EC2_PUBLIC_DNS }}
-           REMOTE_USER: ${{ secrets.USERNAME }}
-           TARGET: ${{ secrets.TARGET_DIR }}
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ env.EC2_PUBLIC_DNS }} >> ~/.ssh/known_hosts
+
+      - name: Deploy using SCP
+        run: |
+          scp -i ~/.ssh/deploy_key -r ./ ${{ secrets.USERNAME }}@${{ env.EC2_PUBLIC_DNS }}:${{ secrets.TARGET_DIR }}
+
+      - name: Run commands on EC2 instance via SSH
+        run: |
+          ssh -i ~/.ssh/deploy_key ${{ secrets.USERNAME }}@${{ env.EC2_PUBLIC_DNS }} "cd ${{ secrets.TARGET_DIR }} && ./deploy.sh"
 
       - name: Execute remote SSH commands
         uses: appleboy/ssh-action@master
