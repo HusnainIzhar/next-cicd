@@ -71,7 +71,7 @@ resource "aws_route_table_association" "public-sub" {
 
 # Define the EC2 instance
 resource "aws_instance" "MyServer" {
-  ami                         = "ami-053b12d3152c0cc71"
+  ami                         = "ami-0c0e147c706360bd7"
   instance_type               = "t2.micro"
   subnet_id                   = aws_subnet.public-subnet.id
   key_name                    = "secret"
