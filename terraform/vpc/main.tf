@@ -88,7 +88,7 @@ resource "aws_eip" "my_eip" {
 }
 
 
-# Output EC2 Instance Public DNS
-output "ec2_public_dns" {
-  value = aws_instance.MyServer.public_dns
+# Output Elastic IP
+output "ec2_public_ip" {
+  value = aws_eip.my_eip.public_ip
 }
