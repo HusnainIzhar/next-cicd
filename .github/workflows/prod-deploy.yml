@@ -52,7 +52,7 @@ jobs:
         with:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
           ARGS: "-rlgoDzvc --delete"
-          SOURCE: "./"
+          SOURCE: "./my-app"
           REMOTE_HOST: ${{ env.DNS }}
           REMOTE_USER: ${{ secrets.USERNAME }}
           TARGET: ${{ secrets.TARGET_DIR }}
