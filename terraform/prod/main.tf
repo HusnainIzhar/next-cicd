@@ -18,9 +18,6 @@ provider "aws" {
 }
 
 
-
-
-
 # Define the EC2 instance
 resource "aws_instance" "MyServer" {
   ami           = "ami-053b12d3152c0cc71"
