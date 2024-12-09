@@ -56,7 +56,7 @@ jobs:
           REMOTE_HOST: ${{ env.DNS }}
           REMOTE_USER: ${{ secrets.USERNAME }}
           TARGET: ${{ secrets.TARGET_DIR }}
-          EXCLUDE: ".git/* terraform/*"
+
 
       # Step 7: Execute Remote SSH Commands
       - name: Execute remote SSH commands
