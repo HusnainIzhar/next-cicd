@@ -53,7 +53,7 @@ resource "aws_instance" "MyServer" {
   vpc_security_group_ids = [aws_security_group.MyServerSG.id]
 
   tags = {
-    Name = "server1"
+    Name = "server"
   }
 }
 
