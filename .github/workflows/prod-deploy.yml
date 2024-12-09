@@ -56,9 +56,8 @@ jobs:
           REMOTE_USER: ${{ secrets.USERNAME }}
           TARGET: ${{ secrets.TARGET_DIR }}
 
-      # Step 7: Execute remote SSH commands
       - name: Execute remote SSH commands
-        uses: appleboy/ssh-action@v0.1.0
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ env.EC2_PUBLIC_DNS }}
           username: ${{ secrets.USERNAME }}
