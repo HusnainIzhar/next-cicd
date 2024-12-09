@@ -46,7 +46,7 @@ jobs:
           DNS=$(terraform output -raw ec2_public_dns)
           echo "DNS=$DNS" >> $GITHUB_ENV
 
-        - name: Deploy to EC2 instance
+      - name: Deploy to EC2 instance
         uses: easingthemes/ssh-deploy@v2.1.5
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
