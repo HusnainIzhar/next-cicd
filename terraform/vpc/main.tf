@@ -15,7 +15,7 @@ terraform {
 
 # Region
 provider "aws" {
-  region = "eu-north-1"
+  region = "ap-south-1"
 }
 
 # Create a VPC
