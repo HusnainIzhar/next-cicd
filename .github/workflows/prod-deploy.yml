@@ -45,9 +45,9 @@ jobs:
           terraform apply -auto-approve tfplan
           DNS=$(terraform output -raw ec2_public_dns)
           echo "DNS=$DNS" >> $GITHUB_ENV
-
+          echo DNS
       - name: Deploy to EC2 instance
-        uses: easingthemes/ssh-deploy@v2.1.5
+        uses: easingthemes/ssh-deploy@v5.1.0
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
           SOURCE: "./"
