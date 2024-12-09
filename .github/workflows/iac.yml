@@ -49,4 +49,4 @@ jobs:
         working-directory: ./terraform/prod
         run: |
           terraform apply -auto-approve tfplan
-          terraform output -raw ec2_public_dns > ./terraform/ec2_dns.txt
+          terraform output -raw ec2_public_dns > ./ec2_dns.txt
