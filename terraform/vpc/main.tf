@@ -26,28 +26,51 @@ resource "aws_vpc" "myvpc" {
   }
 }
 
-# Private subnet
-resource "aws_subnet" "private-subnet" {
+# Private subnet 1
+resource "aws_subnet" "private-subnet-ap-south-1a" {
   cidr_block = "10.0.1.0/24"
-  vpc_id     = aws_vpc.myvpc.id  # Corrected reference
+  availability_zone = "ap-south-1a"
+  vpc_id     = aws_vpc.myvpc.id 
   tags = {
-    Name = "private-subnet"
+    Name = "private-subnet-ap-south-1a"
   }
 }
 
-# Public subnet
-resource "aws_subnet" "public-subnet" {
-  cidr_block              = "10.0.2.0/24"
-  vpc_id                  = aws_vpc.myvpc.id  # Corrected reference
+# Private subnet 2
+resource "aws_subnet" "private-subnet-ap-south-1b" {
+  cidr_block = "10.0.2.0/24"
+  availability_zone = "ap-south-1b"
+  vpc_id     = aws_vpc.myvpc.id
+  tags = {
+    Name = "private-subnet-ap-south-1b"
+  }
+}
+
+# Public subnet 1
+resource "aws_subnet" "public-subnet-ap-south-1a" {
+  cidr_block              = "10.0.3.0/24"
+  availability_zone = "ap-south-1a"
+  vpc_id                  = aws_vpc.myvpc.id 
   map_public_ip_on_launch = true
   tags = {
-    Name = "public-subnet"
+    Name = "public-subnet ap-south-1a"
+  }
+}
+
+# Public subnet 2
+resource "aws_subnet" "public-subnet-ap-south-1b" {
+  cidr_block              = "10.0.3.0/24"
+  availability_zone = "ap-south-1b"
+  vpc_id                  = aws_vpc.myvpc.id 
+  map_public_ip_on_launch = true
+  tags = {
+    Name = "public-subnet ap-south-1b"
   }
 }
 
 # Internet gateway
 resource "aws_internet_gateway" "my-igw" {
-  vpc_id = aws_vpc.myvpc.id  # Corrected reference
+  vpc_id = aws_vpc.myvpc.id 
   tags = {
     Name = "my-igw"
   }
@@ -55,7 +78,7 @@ resource "aws_internet_gateway" "my-igw" {
 
 # Routing table
 resource "aws_route_table" "my-rt" {
-  vpc_id = aws_vpc.myvpc.id  # Corrected reference
+  vpc_id = aws_vpc.myvpc.id 
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -63,10 +86,18 @@ resource "aws_route_table" "my-rt" {
   }
 }
 
-# Routing Association with Public Subnet
+# Routing Association with Public Subnet-1
 resource "aws_route_table_association" "public-sub" {
   route_table_id = aws_route_table.my-rt.id
-  subnet_id      = aws_subnet.public-subnet.id
+  subnet_id      = aws_subnet.public-subnet-ap-south-1a.id
+  
+}
+
+# Routing Association with Public Subnet-2
+resource "aws_route_table_association" "public-sub" {
+  route_table_id = aws_route_table.my-rt.id
+  subnet_id      = aws_subnet.public-subnet-ap-south-1b.id
+  
 }
 
 # Define the EC2 instance
