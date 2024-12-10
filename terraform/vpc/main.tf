@@ -87,18 +87,17 @@ resource "aws_route_table" "my-rt" {
 }
 
 # Routing Association with Public Subnet-1
-resource "aws_route_table_association" "public-sub" {
+resource "aws_route_table_association" "public-sub-a" {
   route_table_id = aws_route_table.my-rt.id
   subnet_id      = aws_subnet.public-subnet-ap-south-1a.id
-  
 }
 
 # Routing Association with Public Subnet-2
-resource "aws_route_table_association" "public-sub" {
+resource "aws_route_table_association" "public-sub-b" {
   route_table_id = aws_route_table.my-rt.id
   subnet_id      = aws_subnet.public-subnet-ap-south-1b.id
-  
 }
+
 
 # Define the EC2 instance
 resource "aws_instance" "MyServer" {
