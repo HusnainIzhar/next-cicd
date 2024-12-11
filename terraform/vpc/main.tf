@@ -151,6 +151,7 @@ resource "aws_launch_template" "ec2_template" {
   name          = "ec2-launch-template"
   image_id      = "ami-053b12d3152c0cc71"  # Ensure this AMI ID is correct for your region
   instance_type = "t2.micro"
+  key_name      = "secret"
 
   network_interfaces {
     security_groups = [aws_security_group.ec2_sg.id]  # Ensure this resource exists
