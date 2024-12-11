@@ -147,7 +147,6 @@ resource "aws_security_group" "ec2_sg" {
   }
 }
 
-# Launch Template for EC2 Instance
 resource "aws_launch_template" "ec2_template" {
   name          = "ec2-launch-template"
   image_id      = "ami-0c02fb55956c7d316" # Replace with preferred AMI
@@ -158,15 +157,17 @@ resource "aws_launch_template" "ec2_template" {
     subnet_id       = aws_subnet.private_subnet_ap_south_1a.id
   }
 
-  user_data = <<-EOF
+  user_data = base64encode(<<-EOF
               #!/bin/bash
               echo "Instance setup completed."
             EOF
+  )
 
   tags = {
     Name = "ec2-instance"
   }
 }
+
 
 # Auto Scaling Group for EC2 Instances
 resource "aws_autoscaling_group" "ec2_asg" {
