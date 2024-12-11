@@ -202,31 +202,32 @@ resource "aws_launch_template" "ec2_template" {
   user_data = base64encode(<<-EOF
               #!/bin/bash
 
-              # Update the package list
-              sudo apt update -y
+              sudo apt-get update -y
 
-              # Install Apache
-              sudo apt install -y apache2
+            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+            sudo apt-get install -y nodejs
 
-              # Start the Apache service
-              sudo systemctl start apache2
+            SECRET_NAME="token"
+REPO_URL="https://github.com/username/repo-name.git"
 
-              # Enable Apache to start on boot
-              sudo systemctl enable apache2
+# Fetch the token from Secrets Manager
+GITHUB_TOKEN=$(aws secretsmanager get-secret-value --secret-id $SECRET_NAME --query SecretString --output text)
 
-              # Get the hostname of the EC2 instance
-              HOSTNAME=$(hostname)
+# Clone the private repository using the token
+git clone https://$GITHUB_TOKENgithub.com/HusnainIzhar/next-cicd.git
 
-              # Create an HTML file that displays the instance's hostname
-              echo "<html>
-              <head>
-                  <title>EC2 Instance</title>
-              </head>
-              <body>
-                  <h1>Welcome to my EC2!</h1>
-                  <p>my hostname is: $${HOSTNAME}</p>
-              </body>
-              </html>" | sudo tee /var/www/html/index.html > /dev/null
+            cd next-cicd/my-app
+
+            npm install
+
+            npm run build
+
+            sudo npm install -g pm2
+
+            pm2 delete all
+
+            pm2 start npm --name "nextjs-app" -- start
+
             EOF
   )
 
