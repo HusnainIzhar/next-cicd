@@ -149,7 +149,7 @@ resource "aws_security_group" "ec2_sg" {
 
 resource "aws_launch_template" "ec2_template" {
   name          = "ec2-launch-template"
-  image_id      = "ami-053b12d3152c0cc71"  # Make sure this AMI ID is correct for your region
+  image_id      = "ami-053b12d3152c0cc71"  # Ensure this AMI ID is correct for your region
   instance_type = "t2.micro"
 
   network_interfaces {
@@ -182,7 +182,7 @@ resource "aws_launch_template" "ec2_template" {
               </head>
               <body>
                   <h1>Welcome to your EC2 Instance!</h1>
-                  <p>Your hostname is: ${HOSTNAME}</p>
+                  <p>Your hostname is: \$HOSTNAME</p>  # Escape the variable with a backslash
               </body>
               </html>" | sudo tee /var/www/html/index.html > /dev/null
             EOF
@@ -192,6 +192,7 @@ resource "aws_launch_template" "ec2_template" {
     Name = "ec2-instance"
   }
 }
+
 
 
 
