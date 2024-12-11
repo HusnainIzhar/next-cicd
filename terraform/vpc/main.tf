@@ -149,17 +149,42 @@ resource "aws_security_group" "ec2_sg" {
 
 resource "aws_launch_template" "ec2_template" {
   name          = "ec2-launch-template"
-  image_id      = "ami-053b12d3152c0cc71"
+  image_id      = "ami-053b12d3152c0cc71"  # Make sure this AMI ID is correct for your region
   instance_type = "t2.micro"
 
   network_interfaces {
-    security_groups = [aws_security_group.ec2_sg.id]
-    subnet_id       = aws_subnet.private_subnet_ap_south_1a.id
+    security_groups = [aws_security_group.ec2_sg.id]  # Ensure this resource exists
+    subnet_id       = aws_subnet.private_subnet_ap_south_1a.id  # Ensure this subnet exists
   }
 
   user_data = base64encode(<<-EOF
               #!/bin/bash
-              echo "Instance setup completed."
+
+              # Update the package list
+              sudo apt update -y
+
+              # Install Apache
+              sudo apt install -y apache2
+
+              # Start the Apache service
+              sudo systemctl start apache2
+
+              # Enable Apache to start on boot
+              sudo systemctl enable apache2
+
+              # Get the hostname of the EC2 instance
+              HOSTNAME=$(hostname)
+
+              # Create an HTML file that displays the instance's hostname
+              echo "<html>
+              <head>
+                  <title>EC2 Instance</title>
+              </head>
+              <body>
+                  <h1>Welcome to your EC2 Instance!</h1>
+                  <p>Your hostname is: ${HOSTNAME}</p>
+              </body>
+              </html>" | sudo tee /var/www/html/index.html > /dev/null
             EOF
   )
 
@@ -167,6 +192,7 @@ resource "aws_launch_template" "ec2_template" {
     Name = "ec2-instance"
   }
 }
+
 
 
 # Auto Scaling Group for EC2 Instances
