@@ -149,7 +149,7 @@ resource "aws_security_group" "ec2_sg" {
 
 resource "aws_launch_template" "ec2_template" {
   name          = "ec2-launch-template"
-  image_id      = "ami-0c02fb55956c7d316" # Replace with preferred AMI
+  image_id      = "ami-053b12d3152c0cc71"
   instance_type = "t2.micro"
 
   network_interfaces {
