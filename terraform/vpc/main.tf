@@ -20,8 +20,8 @@ provider "aws" {
 
 # Create a VPC
 resource "aws_vpc" "myvpc" {
-  cidr_block = "10.0.0.0/16"
-  enable_dns_support = true
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_support   = true
   enable_dns_hostnames = true
   tags = {
     Name = "myvpc"
@@ -70,8 +70,7 @@ resource "aws_internet_gateway" "my_igw" {
 
 # Allocate an Elastic IP for the NAT Gateway
 resource "aws_eip" "nat_eip" {
-  vpc = true
-
+  domain = true
   tags = {
     Name = "nat-eip"
   }
@@ -107,8 +106,7 @@ resource "aws_route_table_association" "private_subnet_route_association" {
   subnet_id      = aws_subnet.private_subnet_ap_south_1a.id
 }
 
-
-# Route Table
+# Route Table for Public Subnets
 resource "aws_route_table" "my_rt" {
   vpc_id = aws_vpc.myvpc.id
 
@@ -192,10 +190,13 @@ resource "aws_launch_template" "ec2_template" {
   image_id      = "ami-053b12d3152c0cc71"  # Ensure this AMI ID is correct for your region
   instance_type = "t2.micro"
   key_name      = "secret"
+  monitoring {
+    enabled = true
+  }
 
   network_interfaces {
-    security_groups = [aws_security_group.ec2_sg.id]  # Ensure this resource exists
-    subnet_id       = aws_subnet.private_subnet_ap_south_1a.id  # Ensure this subnet exists
+    security_groups = [aws_security_group.ec2_sg.id]
+    subnet_id       = aws_subnet.private_subnet_ap_south_1a.id
   }
 
   user_data = base64encode(<<-EOF
@@ -223,7 +224,7 @@ resource "aws_launch_template" "ec2_template" {
               </head>
               <body>
                   <h1>Welcome to your EC2 Instance!</h1>
-                  <p>Your hostname is: \$HOSTNAME</p>  # Escape the variable with a backslash
+                  <p>Your hostname is: \$HOSTNAME</p>
               </body>
               </html>" | sudo tee /var/www/html/index.html > /dev/null
             EOF
@@ -234,15 +235,12 @@ resource "aws_launch_template" "ec2_template" {
   }
 }
 
-
-
-
 resource "aws_autoscaling_group" "ec2_asg" {
-  desired_capacity = 2
-  max_size         = 3
-  min_size         = 1
-  health_check_type = "ELB" # Ensures ASG relies on ELB health checks
-  health_check_grace_period = 300 # Adjust the grace period as needed
+  desired_capacity          = 2
+  max_size                  = 3
+  min_size                  = 1
+  health_check_type         = "ELB"
+  health_check_grace_period = 300
 
   launch_template {
     id      = aws_launch_template.ec2_template.id
@@ -258,17 +256,41 @@ resource "aws_autoscaling_group" "ec2_asg" {
   }
 }
 
-
-# Load Balancer
-resource "aws_lb" "main_lb" {
-  name               = "main-load-balancer"
+# Application Load Balancer (ALB)
+resource "aws_lb" "my_alb" {
+  name               = "my-alb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.lb_sg.id]
   subnets            = [aws_subnet.public_subnet_ap_south_1a.id, aws_subnet.public_subnet_ap_south_1b.id]
+  enable_deletion_protection = false
+  tags = {
+    Name = "my-alb"
+  }
+}
+
+# Security group for ALB
+resource "aws_security_group" "alb_sg" {
+  name        = "alb_sg"
+  description = "Allow HTTP traffic to the ALB"
+  vpc_id      = aws_vpc.myvpc.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   tags = {
-    Name = "main-load-balancer"
+    Name = "alb-sg"
   }
 }
 
@@ -292,7 +314,7 @@ resource "aws_lb_target_group" "ec2_target_group" {
 
 # Listener for Load Balancer
 resource "aws_lb_listener" "http_listener" {
-  load_balancer_arn = aws_lb.main_lb.arn
+  load_balancer_arn = aws_lb.my_alb.arn
   port              = 80
   protocol          = "HTTP"
 
@@ -305,6 +327,10 @@ resource "aws_lb_listener" "http_listener" {
 # Attach Auto Scaling Group to Target Group
 resource "aws_autoscaling_attachment" "asg_attachment" {
   autoscaling_group_name = aws_autoscaling_group.ec2_asg.id
-  lb_target_group_arn = aws_lb_target_group.ec2_target_group.arn
+  lb_target_group_arn    = aws_lb_target_group.ec2_target_group.arn
 }
 
+# Output Load Balancer DNS
+output "load_balancer_dns" {
+  value = aws_lb.my_alb.dns_name
+}
