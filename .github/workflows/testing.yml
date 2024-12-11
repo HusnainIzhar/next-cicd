@@ -25,7 +25,7 @@ jobs:
 
       # Step 2: Initialize Terraform
       - name: Initialize Terraform
-        working-directory: ./terraform/final
+        working-directory: ./terraform/vpc
         run:  |
            terraform init
           #  terraform destroy -auto-approve
@@ -33,17 +33,17 @@ jobs:
 
       # Step 3: Validate Terraform
       - name: Terraform Validate
-        working-directory: ./terraform/final
+        working-directory: ./terraform/vpc
         run: terraform validate
 
       # Step 4: Generate Terraform Plan
       - name: Terraform Plan
-        working-directory: ./terraform/final
+        working-directory: ./terraform/vpc
         run: terraform plan -out=tfplan
 
       # Step 5: Apply Terraform Plan
       - name: Apply with Approval
-        working-directory: ./terraform/final
+        working-directory: ./terraform/vpc
         run: |
           terraform apply -auto-approve tfplan
       # # # #     # IP=$(terraform output -raw ec2_public_ip)
