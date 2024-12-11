@@ -197,11 +197,13 @@ resource "aws_launch_template" "ec2_template" {
 
 
 
-# Auto Scaling Group for EC2 Instances
 resource "aws_autoscaling_group" "ec2_asg" {
   desired_capacity = 2
   max_size         = 3
   min_size         = 1
+  health_check_type = "ELB" # Ensures ASG relies on ELB health checks
+  health_check_grace_period = 300 # Adjust the grace period as needed
+
   launch_template {
     id      = aws_launch_template.ec2_template.id
     version = "$Latest"
@@ -210,12 +212,12 @@ resource "aws_autoscaling_group" "ec2_asg" {
   vpc_zone_identifier = [aws_subnet.private_subnet_ap_south_1a.id]
 
   tag {
-      key                 = "Name"
-      value               = "ec2-instance"
-      propagate_at_launch = true
-    }
-  
+    key                 = "Name"
+    value               = "ec2-instance"
+    propagate_at_launch = true
+  }
 }
+
 
 # Load Balancer
 resource "aws_lb" "main_lb" {
