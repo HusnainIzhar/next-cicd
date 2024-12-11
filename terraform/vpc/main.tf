@@ -200,33 +200,54 @@ resource "aws_launch_template" "ec2_template" {
   }
 
   user_data = base64encode(<<-EOF
-              #!/bin/bash
+             #!/bin/bash
 
-              sudo apt-get update -y
+# Update the package manager
+sudo apt-get update -y
 
-            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-            sudo apt-get install -y nodejs
+# Install Node.js
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs
 
-            SECRET_NAME="token"
-REPO_URL="https://github.com/username/repo-name.git"
+# Variables
+SECRET_NAME="token"
+REPO_URL="https://github.com/HusnainIzhar/next-cicd.git"
+APP_DIR="/home/ubuntu/app"
 
-# Fetch the token from Secrets Manager
-GITHUB_TOKEN=$(aws secretsmanager get-secret-value --secret-id $SECRET_NAME --query SecretString --output text)
+# Fetch the GitHub token from AWS Secrets Manager
+GITHUB_TOKEN=$(aws secretsmanager get-secret-value --secret-id $SECRET_NAME --query SecretString --output text | jq -r '.token')
 
-# Clone the private repository using the token
-git clone https://$GITHUB_TOKENgithub.com/HusnainIzhar/next-cicd.git
+# Ensure the app directory exists
+mkdir -p $APP_DIR
+cd $APP_DIR
 
-            cd next-cicd/my-app
+# Clone the repository
+if [ -d "next-cicd" ]; then
+  echo "Repository already exists. Pulling latest changes..."
+  cd next-cicd
+  git reset --hard
+  git pull origin main
+else
+  echo "Cloning the repository..."
+  git clone https://$GITHUB_TOKEN@github.com/HusnainIzhar/next-cicd.git
+  cd next-cicd
+fi
 
-            npm install
+# Navigate to the app directory
+cd my-app
 
-            npm run build
+# Install dependencies
+npm install
 
-            sudo npm install -g pm2
+# Build the app
+npm run build
 
-            pm2 delete all
+# Install PM2 globally
+sudo npm install -g pm2
 
-            pm2 start npm --name "nextjs-app" -- start
+# Restart the app with PM2
+pm2 delete all
+pm2 start npm --name "nextjs-app" -- start
 
             EOF
   )
