@@ -219,7 +219,7 @@ GITHUB_TOKEN=$(aws secretsmanager get-secret-value --secret-id $SECRET_NAME --qu
 
 # Ensure the app directory exists
 mkdir -p $APP_DIR
-cd $APP_DIR
+cd /home/ubuntu/app/next-cicd/my-app
 
 # Clone the repository
 if [ -d "next-cicd" ]; then
