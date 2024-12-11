@@ -30,8 +30,8 @@ resource "aws_vpc" "myvpc" {
 
 # Request an ACM Certificate
 resource "aws_acm_certificate" "mycert_acm" {
-  domain_name               = "ec2.${my-alb-1263533236.ap-south-1.elb.amazonaws.com}"
-  subject_alternative_names = ["*.ec2.${my-alb-1263533236.ap-south-1.elb.amazonaws.com}"]
+  domain_name               = "ec2.${aws_lb.my_alb.dns_name}"
+  subject_alternative_names = ["*.ec2.${aws_lb.my_alb.dns_name}"]
   validation_method         = "DNS"
 
   lifecycle {
@@ -41,7 +41,7 @@ resource "aws_acm_certificate" "mycert_acm" {
 
 # Create Route 53 DNS Record for Validation
 data "aws_route53_zone" "selected_zone" {
-  name         = "my-alb-1263533236.ap-south-1.elb.amazonaws.com"
+  name         = "mydomain.com"  # Replace with your domain name
   private_zone = false
 }
 
