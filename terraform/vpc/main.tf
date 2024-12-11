@@ -223,7 +223,7 @@ resource "aws_launch_template" "ec2_template" {
                   <title>EC2 Instance</title>
               </head>
               <body>
-                  <h1>Welcome to your EC2 Instance!</h1>
+                  <h1>Welcome to my EC2!</h1>
                   <p>my hostname is: $${HOSTNAME}</p>
               </body>
               </html>" | sudo tee /var/www/html/index.html > /dev/null
