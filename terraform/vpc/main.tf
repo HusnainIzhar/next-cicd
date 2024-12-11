@@ -28,10 +28,23 @@ resource "aws_vpc" "myvpc" {
   }
 }
 
+# Application Load Balancer (ALB)
+resource "aws_lb" "my_alb" {
+  name               = "my-alb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.lb_sg.id]
+  subnets            = [aws_subnet.public_subnet_ap_south_1a.id, aws_subnet.public_subnet_ap_south_1b.id]
+  enable_deletion_protection = false
+  tags = {
+    Name = "my-alb"
+  }
+}
+
 # Request an ACM Certificate
 resource "aws_acm_certificate" "mycert_acm" {
-  domain_name               = "ec2.${aws_lb.my_alb.dns_name}"
-  subject_alternative_names = ["*.ec2.${aws_lb.my_alb.dns_name}"]
+  domain_name               = aws_lb.my_alb.dns_name
+  subject_alternative_names = ["*.${aws_lb.my_alb.dns_name}"]
   validation_method         = "DNS"
 
   lifecycle {
@@ -41,7 +54,7 @@ resource "aws_acm_certificate" "mycert_acm" {
 
 # Create Route 53 DNS Record for Validation
 data "aws_route53_zone" "selected_zone" {
-  name         = "mydomain.com"  # Replace with your domain name
+  name         = "mydomain.com"  # Replace with your actual domain name
   private_zone = false
 }
 
@@ -296,19 +309,6 @@ resource "aws_autoscaling_group" "ec2_asg" {
     key                 = "Name"
     value               = "ec2-instance"
     propagate_at_launch = true
-  }
-}
-
-# Application Load Balancer (ALB)
-resource "aws_lb" "my_alb" {
-  name               = "my-alb"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [aws_security_group.lb_sg.id]
-  subnets            = [aws_subnet.public_subnet_ap_south_1a.id, aws_subnet.public_subnet_ap_south_1b.id]
-  enable_deletion_protection = false
-  tags = {
-    Name = "my-alb"
   }
 }
 
