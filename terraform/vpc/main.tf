@@ -70,7 +70,7 @@ resource "aws_internet_gateway" "my_igw" {
 
 # Allocate an Elastic IP for the NAT Gateway
 resource "aws_eip" "nat_eip" {
-  domain = true
+  domain = "vpc"
   tags = {
     Name = "nat-eip"
   }
