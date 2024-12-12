@@ -16,55 +16,32 @@ resource "aws_launch_template" "ec2_template" {
   user_data = base64encode(<<-EOF
     #!/bin/bash
 
-    # Update the package manager
-    sudo apt-get update -y
+              # Update the package list
+              sudo apt update -y
 
-    # Install Node.js
-    curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-    sudo apt-get install -y nodejs
+              # Install Apache
+              sudo apt install -y apache2
 
-    # Variables
-    SECRET_NAME="${var.tmp_script_variables.pat_secret_name}"
-    REPO_URL="${var.tmp_script_variables.repo_url}"
-    APP_DIR="/home/ubuntu/app"
-    INSTALLATION_DIR="${var.tmp_script_variables.installation_dir}"
-    APP_NAME="${var.tmp_script_variables.app_name}"
+              # Start the Apache service
+              sudo systemctl start apache2
 
-    # Fetch the GitHub token from AWS Secrets Manager
-    GITHUB_TOKEN=$(aws secretsmanager get-secret-value --secret-id $SECRET_NAME --query SecretString --output text | jq -r '.token')
+              # Enable Apache to start on boot
+              sudo systemctl enable apache2
 
-    # Ensure the app directory exists
-    mkdir -p $APP_DIR
-    cd $INSTALLATION_DIR
+              # Get the hostname of the EC2 instance
+              HOSTNAME=$(hostname)
 
-    # Clone the repository
-    if [ -d "$APP_NAME" ]; then
-      echo "Repository already exists. Pulling latest changes..."
-      cd $APP_NAME
-      git reset --hard
-      git pull origin main
-    else
-      echo "Cloning the repository..."
-      git clone https://$GITHUB_TOKEN@github.com/HusnainIzhar/next-cicd.git
-      cd next-cicd
-    fi
-
-    # Navigate to the app directory
-    cd my-app
-
-    # Install dependencies
-    npm install
-
-    # Build the app
-    npm run build
-
-    # Install PM2 globally
-    sudo npm install -g pm2
-
-    # Restart the app with PM2
-    pm2 delete all
-    pm2 start npm --name "nextjs-app" -- start
-  EOF
+              # Create an HTML file that displays the instance's hostname
+              echo "<html>
+              <head>
+                  <title>EC2 Instance</title>
+              </head>
+              <body>
+                  <h1>Welcome to your EC2 Instance!</h1>
+                  <p>Your hostname is: \$HOSTNAME</p>
+              </body>
+              </html>" | sudo tee /var/www/html/index.html > /dev/null
+            EOF
   )
 
   tags = {
