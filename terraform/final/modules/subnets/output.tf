@@ -8,7 +8,7 @@ output "private_subnet_us_east_1b_id" {
 }
 
 output "public_subnet_us_east_1a_id" {
-  value = aws_subnet.public_subnet_us-east_1a.id
+  value = aws_subnet.public_subnet_us_east_1a.id
   
 }
 
