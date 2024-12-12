@@ -32,24 +32,24 @@ jobs:
         working-directory: ./terraform/final
         run:  |
            terraform init
-           terraform destroy -auto-approve -var-file=env/production/terraform.tfvars
-           rm -f terraform.tfstate terraform.tfstate.backup
+          # terraform destroy -auto-approve -var-file=env/production/terraform.tfvars
+           #rm -f terraform.tfstate terraform.tfstate.backup
 
       # # Step 3: Validate Terraform
-      # - name: Terraform Validate
-      #   working-directory: ./terraform/final
-      #   run: terraform validate
+      - name: Terraform Validate
+        working-directory: ./terraform/final
+        run: terraform validate
 
-      # # Step 4: Generate Terraform Plan
-      # - name: Terraform Plan
-      #   working-directory: ./terraform/final
-      #   run: terraform plan -out=tfplan -var-file=env/production/terraform.tfvars
+      # Step 4: Generate Terraform Plan
+      - name: Terraform Plan
+        working-directory: ./terraform/final
+        run: terraform plan -out=tfplan -var-file=env/production/terraform.tfvars
 
-      # # Step 5: Apply Terraform Plan
-      # - name: Apply with Approval
-      #   working-directory: ./terraform/final
-      #   run: |
-      #     terraform apply -auto-approve tfplan
+      # Step 5: Apply Terraform Plan
+      - name: Apply with Approval
+        working-directory: ./terraform/final
+        run: |
+          terraform apply -auto-approve tfplan
       # # # #     # IP=$(terraform output -raw ec2_public_ip)
       #     # echo "EC2_IP=$IP" >> $GITHUB_ENV
 
