@@ -23,7 +23,7 @@ resource "aws_security_group" "lb_sg" {
 
 # Security Group for EC2 Instance
 resource "aws_security_group" "ec2_sg" {
-  vpc_id = aws_vpc.myvpc.id
+  vpc_id = var.vpc_id
 
   ingress {
     from_port   = 22
@@ -55,7 +55,7 @@ resource "aws_security_group" "ec2_sg" {
 resource "aws_security_group" "alb_sg" {
   name        = "alb_sg"
   description = "Allow HTTP traffic to the ALB"
-  vpc_id      = aws_vpc.myvpc.id
+  vpc_id      = var.vpc_id
 
   ingress {
     from_port   = 80

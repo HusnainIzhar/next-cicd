@@ -53,10 +53,10 @@ module "asg" {
 
 module "alb" {
   source                        = "./modules/alb"
-  sg_alb = module.security_groups.alb_security_group_id
+  sg_alb = module.security_groups.sg_alb
   public_subnet_us_east_1a = module.subnets.public_subnet_us_east_1a_id
   public_subnet_us_east_1b = module.subnets.public_subnet_us_east_1b_id
   project_name = var.project_name
   vpc_id = module.vpc.vpc_id
-  aws_autoscaling_group_id = module.asg.aws_autoscaling_group_id
+  aws_autoscaling_group_id = module.asg.asg_auto_scaling_group_id
 }
