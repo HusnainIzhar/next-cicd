@@ -8,15 +8,15 @@ resource "aws_subnet" "private_subnet_us_east_1a" {
   }
 }
 
-# # Private Subnet in us-east-1b
-# resource "aws_subnet" "private_subnet_us_east_1b" {
-#   cidr_block        = "10.0.2.0/24"
-#   availability_zone = var.region.b1
-#   vpc_id            = var.vpc_id
-#   tags = {
-#     Name = "${var.project_name}-private-subnet-${var.region.b1}"
-#   }
-# }
+# Private Subnet in us-east-1b
+resource "aws_subnet" "private_subnet_us_east_1b" {
+  cidr_block        = "10.0.2.0/24"
+  availability_zone = var.region.b1
+  vpc_id            = var.vpc_id
+  tags = {
+    Name = "${var.project_name}-private-subnet-${var.region.b1}"
+  }
+}
 
 # Public Subnet in us-east-1a
 resource "aws_subnet" "public_subnet_us_east_1a" {
