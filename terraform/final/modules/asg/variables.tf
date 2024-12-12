@@ -13,9 +13,15 @@ variable "ec2_template_launch_id" {
   type        = string
 }
 
-variable "subnet_id" {
+variable "private_subnet_us_east_1a" {
   description = "The ID of the subnet"
   type        = string
+}
+
+variable "private_subnet_us_east_1b" {
+  description = "The ID of the subnet"
+  type        = string
+  
 }
 
 variable "project_name" {

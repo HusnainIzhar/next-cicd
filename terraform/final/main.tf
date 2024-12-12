@@ -48,7 +48,8 @@ module "asg" {
   source                     = "./modules/asg"
   ec2_asg_var = var.ec2_asg_var
   ec2_template_launch_id = module.ec2.ec2_template_launch_id
-  subnet_id = module.subnets.private_subnet_us_east_1a_id
+  private_subnet_us_east_1a = module.subnets.private_subnet_us_east_1a_id
+  private_subnet_us_east_1b = module.subnets.private_subnet_us_east_1b_id
   project_name = var.project_name
 }
 
