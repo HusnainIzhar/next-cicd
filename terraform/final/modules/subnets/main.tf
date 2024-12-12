@@ -86,11 +86,6 @@ resource "aws_route_table_association" "private_subnet_us_east_1a_route_associat
   subnet_id      = aws_subnet.private_subnet_us_east_1a.id
 }
 
-# Associate the private subnet with the route table
-resource "aws_route_table_association" "private_subnet_us_east_1b_route_association" {
-  route_table_id = aws_route_table.private_route_table.id
-  subnet_id      = aws_subnet.private_subnet_us_east_1b.id
-}
 
 # Route Table for Public Subnets
 resource "aws_route_table" "my_rt" {
