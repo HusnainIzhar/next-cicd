@@ -51,6 +51,7 @@ module "asg" {
   private_subnet_us_east_1a = module.subnets.private_subnet_us_east_1a_id
   private_subnet_us_east_1b = module.subnets.private_subnet_us_east_1b_id
   project_name = var.project_name
+  aws_alb_target_group_id = module.alb.aws_alb_target_group_id
 }
 
 module "alb" {
