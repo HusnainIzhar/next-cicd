@@ -45,6 +45,6 @@ resource "aws_lb_listener" "http_listener" {
 
 # Attach Auto Scaling Group to Target Group
 resource "aws_autoscaling_attachment" "asg_attachment" {
-  autoscaling_group_name = var.aws_autoscaling_group_id.arn
+  autoscaling_group_name = var.aws_autoscaling_group_id
   lb_target_group_arn    = aws_lb_target_group.ec2_target_group.arn
 }
