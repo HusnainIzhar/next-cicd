@@ -39,7 +39,7 @@ module "ec2" {
   source       = "./modules/ec2"
   template_var = var.template_var
   project_name = var.project_name
-  ec2_security_group_id = module.security_groups.ec2_security_group_id
+  sg_ec2  = module.security_groups.ec2_security_group_id
   subnet_id = module.subnets.private_subnet_us_east_1a_id
   tmp_script_variables = var.tmp_script_variables
 }
@@ -53,7 +53,7 @@ module "asg" {
 
 module "alb" {
   source                        = "./modules/alb"
-  sg_id = module.security_groups.alb_security_group_id
+  sg_alb = module.security_groups.alb_security_group_id
   public_subnet_us_east_1a = module.subnets.public_subnet_us_east_1a_id
   public_subnet_us_east_1b = module.subnets.public_subnet_us_east_1b_id
   project_name = var.project_name
