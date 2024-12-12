@@ -6,8 +6,8 @@ variable "region" {
     c1 = string
   })
   default = {
-    a1 = "us-east-1a"
-    b1 = "us-east-1b"
+    a1 = "ap-south-1a"
+    b1 = "ap-south-1b"
     c1 = "us-east-1c"
   }
 }
