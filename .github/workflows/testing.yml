@@ -32,7 +32,7 @@ jobs:
         working-directory: ./terraform/final
         run:  |
            terraform init
-           terraform destroy -auto-approve -var-file=$GITHUB_ENV
+           terraform destroy -auto-approve -var-file=env/production/terraform.tfvars
            rm -f terraform.tfstate terraform.tfstate.backup
 
       # # Step 3: Validate Terraform
