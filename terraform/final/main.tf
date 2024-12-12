@@ -1,4 +1,3 @@
-# Initialize Terraform
 terraform {
   required_providers {
     aws = {
@@ -13,12 +12,10 @@ terraform {
   }
 }
 
-# AWS Provider Configuration
 provider "aws" {
   region = var.region
 }
 
-# Create a VPC
 module "vpc" {
   source       = "./modules/vpc"
   project_name = var.project_name
@@ -40,7 +37,7 @@ module "ec2" {
   template_var = var.template_var
   project_name = var.project_name
   sg_ec2  = module.security_groups.sg_ec2
-  subnet_id = module.subnets.private_subnet_us_east_1a_id
+  subnet_private_us_east_1a = module.subnets.private_subnet_us_east_1a_id
   tmp_script_variables = var.tmp_script_variables
 }
 

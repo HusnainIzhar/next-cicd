@@ -18,7 +18,7 @@ variable "sg_ec2" {
   type        = string
 }
 
-variable "subnet_id" {
+variable "subnet_private_us_east_1a" {
   description = "The ID of the subnet where the EC2 instance will be launched"
   type        = string
 }

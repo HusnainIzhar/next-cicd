@@ -8,7 +8,7 @@ variable "region" {
   default = {
     a1 = "ap-south-1a"
     b1 = "ap-south-1b"
-    c1 = "us-east-1c"
+    c1 = "ap-south-1c"
   }
 }
 

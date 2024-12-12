@@ -10,7 +10,7 @@ resource "aws_launch_template" "ec2_template" {
 
   network_interfaces {
     security_groups = [var.sg_ec2]
-    subnet_id       = var.subnet_id
+    subnet_id       = var.subnet_private_us_east_1a
   }
 
   user_data = base64encode(<<-EOF
