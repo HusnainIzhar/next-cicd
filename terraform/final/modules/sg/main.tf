@@ -39,11 +39,10 @@ resource "aws_security_group" "ec2_sg" {
   }
 
   ingress {
-    # Allow SSH traffic (optional, restrict to your IP for security)
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["YOUR_IP_ADDRESS/32"] # Replace with your IP
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
