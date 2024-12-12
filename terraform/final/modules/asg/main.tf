@@ -13,8 +13,8 @@ resource "aws_autoscaling_group" "ec2_asg" {
 
   # Use private subnets for the ASG
   vpc_zone_identifier = [
-    aws_subnet.private_subnet_us_east_1a.id,
-    aws_subnet.private_subnet_us_east_1b.id
+    aws_subnet.private_subnet_us_east_1a,
+    aws_subnet.private_subnet_us_east_1b
   ]
 
   tag {
