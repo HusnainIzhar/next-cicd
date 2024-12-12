@@ -26,6 +26,6 @@ resource "aws_autoscaling_group" "ec2_asg" {
 
 # Attach Auto Scaling Group to Target Group
 resource "aws_autoscaling_attachment" "asg_attachment" {
-  autoscaling_group_name = aws_autoscaling_group.ec2_asg.name
+  autoscaling_group_name = aws_autoscaling_group.ec2_asg.arn
   lb_target_group_arn    = var.aws_alb_target_group_id.arn
 }
