@@ -1,3 +1,4 @@
+# Auto Scaling Group
 resource "aws_autoscaling_group" "ec2_asg" {
   desired_capacity          = var.ec2_asg_var.desired_capacity
   max_size                  = var.ec2_asg_var.max_size
@@ -10,11 +11,21 @@ resource "aws_autoscaling_group" "ec2_asg" {
     version = "$Latest"
   }
 
-  vpc_zone_identifier = [var.subnet_id]
+  # Use private subnets for the ASG
+  vpc_zone_identifier = [
+    aws_subnet.private_subnet_us_east_1a.id,
+    aws_subnet.private_subnet_us_east_1b.id
+  ]
 
   tag {
     key                 = "Name"
-    value               = "ec2-instance"
+    value               = "${var.project_name}-ec2-instance"
     propagate_at_launch = true
   }
+}
+
+# Attach Auto Scaling Group to Target Group
+resource "aws_autoscaling_attachment" "asg_attachment" {
+  autoscaling_group_name = aws_autoscaling_group.ec2_asg.name
+  lb_target_group_arn    = aws_lb_target_group.ec2_target_group.arn
 }

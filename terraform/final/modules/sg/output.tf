@@ -6,8 +6,3 @@ output "sg_lb" {
     value = aws_security_group.lb_sg.id
   
 }
-
-output "sg_alb" {
-  value = aws_security_group.alb_sg.id
-  
-}
