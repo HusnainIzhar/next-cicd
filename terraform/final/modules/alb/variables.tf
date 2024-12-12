@@ -25,5 +25,5 @@ variable "vpc_id" {
 
 variable "aws_autoscaling_group_id" {
   description = "The ID of the Auto Scaling group"
-  type        = string
+
 }
