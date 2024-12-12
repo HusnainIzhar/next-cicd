@@ -45,11 +45,11 @@ jobs:
         working-directory: ./terraform/final
         run: terraform plan -out=tfplan -var-file=env/production/terraform.tfvars
 
-      # # Step 5: Apply Terraform Plan
-      # - name: Apply with Approval
-      #   working-directory: ./terraform/final
-      #   run: |
-      #     terraform apply -auto-approve tfplan
+      # Step 5: Apply Terraform Plan
+      - name: Apply with Approval
+        working-directory: ./terraform/final
+        run: |
+          terraform apply -auto-approve tfplan
       # # # #     # IP=$(terraform output -raw ec2_public_ip)
       #     # echo "EC2_IP=$IP" >> $GITHUB_ENV
 
