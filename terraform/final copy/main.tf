@@ -60,3 +60,10 @@ module "alb" {
   vpc_id = module.vpc.vpc_id
   aws_autoscaling_group_id = module.asg.asg_auto_scaling_group_id
 }
+
+
+# Attach Auto Scaling Group to Target Group
+resource "aws_autoscaling_attachment" "asg_attachment" {
+  autoscaling_group_name = module.asg.asg_auto_scaling_group_id
+  lb_target_group_arn    = module.alb.aws_alb_target_group_id
+}
