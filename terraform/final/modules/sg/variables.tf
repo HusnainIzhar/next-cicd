@@ -3,9 +3,3 @@ variable "vpc_id" {
   type        = string
   
 }
-
-variable "sg_alb" {
-  description = "Security group for alb"
-  type = string
-  
-}
