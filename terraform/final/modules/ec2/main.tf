@@ -41,10 +41,6 @@ resource "aws_launch_template" "ec2_template" {
                   <p>Your hostname is: \$$HOSTNAME</p>
               </body>
               </html>" | sudo tee /var/www/html/index.html > /dev/null
-EOF'
-
-# Restart Nginx to apply the configuration
-sudo systemctl restart nginx
             EOF
   )
 
