@@ -29,7 +29,7 @@ jobs:
           #  echo "TF_VAR_FILE=env/production/terraform.tfvars" >> $GITHUB_ENV    
       # Step 2: Initialize Terraform
       - name: Initialize Terraform
-        working-directory: ./terraform/backup
+        working-directory: ./terraform/final
         run:  |
            terraform init
             # terraform destroy -auto-approve 
