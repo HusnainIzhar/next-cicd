@@ -48,7 +48,6 @@ module "asg" {
   private_subnet_us_east_1a = module.subnets.private_subnet_us_east_1a_id
   private_subnet_us_east_1b = module.subnets.private_subnet_us_east_1b_id
   project_name = var.project_name
-  aws_alb_target_group_id = module.alb.aws_alb_target_group_id
 }
 
 module "alb" {
@@ -58,5 +57,11 @@ module "alb" {
   public_subnet_us_east_1b = module.subnets.public_subnet_us_east_1b_id
   project_name = var.project_name
   vpc_id = module.vpc.vpc_id
-  aws_autoscaling_group_id = module.asg.asg_auto_scaling_group_id
+}
+
+
+# Attach Auto Scaling Group to Target Group
+resource "aws_autoscaling_attachment" "asg_attachment" {
+  autoscaling_group_name = module.asg.asg_auto_scaling_group_id
+  lb_target_group_arn    = module.alb.aws_alb_target_group_id
 }

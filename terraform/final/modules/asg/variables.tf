@@ -30,8 +30,3 @@ variable "project_name" {
   
 }
 
-variable "aws_alb_target_group_id" {
-  description = "The ID of the target group"
-
-  
-}

@@ -22,8 +22,3 @@ variable "vpc_id" {
   description = "The ID of the VPC"
   type        = string
 }
-
-variable "aws_autoscaling_group_id" {
-  description = "The ID of the Auto Scaling group"
-
-}
