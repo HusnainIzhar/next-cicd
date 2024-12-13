@@ -32,9 +32,9 @@ jobs:
         working-directory: ./terraform/backup
         run:  |
            terraform init
-            terraform destroy -auto-approve 
+            # terraform destroy -auto-approve 
             # -var-file=env/production/terraform.tfvars
-            rm -f terraform.tfstate terraform.tfstate.backup
+            # rm -f terraform.tfstate terraform.tfstate.backup
 
       # Step 3: Validate Terraform
       - name: Terraform Validate
