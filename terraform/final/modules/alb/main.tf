@@ -3,8 +3,8 @@ resource "aws_lb" "couro_web_alb" {
   name                        = "${var.project_name}-alb"
   internal                    = false
   load_balancer_type          = "application"
-  security_groups             = [var.sg_alb] # ALB security group
-  subnets                     = [var.public_subnet_us_east_1a,var.public_subnet_us_east_1b] # Public subnets
+  security_groups             = [var.sg_alb]
+  subnets                     = [var.public_subnet_us_east_1a,var.public_subnet_us_east_1b]
   enable_deletion_protection  = false
 
   tags = {
