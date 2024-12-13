@@ -24,12 +24,12 @@ jobs:
           terraform_wrapper: false
 
       - name: Set Environment Variables
-        working-directory: ./terraform/final
+        working-directory: ./terraform/backup
         run: |
             echo "TF_VAR_FILE=env/production/terraform.tfvars" >> $GITHUB_ENV    
       # Step 2: Initialize Terraform
       - name: Initialize Terraform
-        working-directory: ./terraform/final
+        working-directory: ./terraform/backup
         run:  |
            terraform init
              terraform destroy -auto-approve -var-file=env/production/terraform.tfvars
