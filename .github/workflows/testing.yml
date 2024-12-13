@@ -43,7 +43,8 @@ jobs:
       # Step 4: Generate Terraform Plan
       - name: Terraform Plan
         working-directory: ./terraform/backup
-        run: terraform plan -out=tfplan -var-file=env/production/terraform.tfvars
+        run: terraform plan
+        # -out=tfplan -var-file=env/production/terraform.tfvars
 
       # Step 5: Apply Terraform Plan
       - name: Apply with Approval
