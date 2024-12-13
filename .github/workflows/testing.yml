@@ -55,7 +55,7 @@ jobs:
       #     # echo "EC2_IP=$IP" >> $GITHUB_ENV
 
       # Step 6: Deploy to EC2 instance
-      # - name: Deploy to EC2 instance
+      # - name: Deploy to EC2 inst
       #   uses: easingthemes/ssh-deploy@v2.1.5
       #   env:
       #     SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
