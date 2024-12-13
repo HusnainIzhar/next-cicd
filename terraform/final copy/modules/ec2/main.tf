@@ -14,7 +14,7 @@ resource "aws_launch_template" "ec2_template" {
   }
 
   user_data = base64encode(<<-EOF
-   #!/bin/bash
+#!/bin/bash
 
 # Update the package manager
 sudo apt-get update -y
