@@ -24,32 +24,32 @@ jobs:
           terraform_wrapper: false
 
       - name: Set Environment Variables
-        working-directory: ./terraform/final
+        working-directory: ./terraform/final copy
         run: |
             echo "TF_VAR_FILE=env/production/terraform.tfvars" >> $GITHUB_ENV    
       # Step 2: Initialize Terraform
       - name: Initialize Terraform
-        working-directory: ./terraform/final
+        working-directory: ./terraform/final copy
         run:  |
            terraform init
-              terraform destroy -auto-approve -var-file=env/production/terraform.tfvars
-              rm -f terraform.tfstate terraform.tfstate.backup
+             # terraform destroy -auto-approve -var-file=env/production/terraform.tfvars
+              #rm -f terraform.tfstate terraform.tfstate.backup
 
-      # # Step 3: Validate Terraform
-      # - name: Terraform Validate
-      #   working-directory: ./terraform/final
-      #   run: terraform validate
+      # Step 3: Validate Terraform
+      - name: Terraform Validate
+        working-directory: ./terraform/final copy
+        run: terraform validate
 
-      # # Step 4: Generate Terraform Plan
-      # - name: Terraform Plan
-      #   working-directory: ./terraform/final
-      #   run: terraform plan -out=tfplan -var-file=env/production/terraform.tfvars
+      # Step 4: Generate Terraform Plan
+      - name: Terraform Plan
+        working-directory: ./terraform/final copy
+        run: terraform plan -out=tfplan -var-file=env/production/terraform.tfvars
 
-      # # Step 5: Apply Terraform Plan
-      # - name: Apply with Approval
-      #   working-directory: ./terraform/final
-      #   run: |
-      #     terraform apply -auto-approve tfplan
+      # Step 5: Apply Terraform Plan
+      - name: Apply with Approval
+        working-directory: ./terraform/final copy
+        run: |
+          terraform apply -auto-approve tfplan
 
 
 
