@@ -54,6 +54,11 @@ jobs:
         working-directory: ./terraform
         run: terraform plan -var-file=$TF_VARS -out=tfplan
 
+       # Step 5: Backup Terraform State
+      - name: Backup Terraform State
+       working-directory: ./terraform
+       run: terraform state pull > state_backup.tfstate
+
       - name: Wait for 10 Seconds
         run: sleep 10s 
 
@@ -67,4 +72,4 @@ jobs:
       - name: Rollback Terraform
         if: failure()
         working-directory: ./terraform
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve state_backup.tfstate
