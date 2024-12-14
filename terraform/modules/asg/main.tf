@@ -27,7 +27,6 @@ resource "aws_autoscaling_group" "ec2_asg" {
     preferences {
       min_healthy_percentage = 50
       instance_warmup        = 300
-      scale_in_protected_instances = true
     }
   }
 }
