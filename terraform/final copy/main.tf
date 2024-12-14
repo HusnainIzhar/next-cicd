@@ -49,6 +49,7 @@ module "asg" {
   private_subnet = module.subnets.private_subnet
   aws_lb_target_group = module.alb.aws_alb_target_group_id
   project_name = var.project_name
+  launch_template_latest_version = module.ec2.launch_template_latest_version
 }
 
 module "alb" {

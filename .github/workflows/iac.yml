@@ -57,12 +57,7 @@ jobs:
       - name: Wait for 10 Seconds
         run: sleep 10s 
 
-      # Step 5: Backup Terraform State
-      - name: Backup Terraform State
-        working-directory: ./terraform/final copy
-        run: terraform state pull > state_backup.tfstate
-
-      # Step 6: Apply Terraform Plan
+      # Step 5: Apply Terraform Plan
       - name: Apply with Approval
         working-directory: ./terraform/final copy
         run: terraform apply -auto-approve tfplan
@@ -72,4 +67,4 @@ jobs:
       - name: Rollback Terraform
         if: failure()
         working-directory: ./terraform/final copy
-        run: terraform apply -auto-approve state_backup.tfstate
+        run: terraform apply -auto-approve

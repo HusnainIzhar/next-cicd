@@ -29,3 +29,6 @@ variable "aws_lb_target_group" {
   type        = string
 }
 
+variable "launch_template_latest_version" {
+  description = " value from ec2 launch template"
+}

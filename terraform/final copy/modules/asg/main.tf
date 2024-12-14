@@ -10,7 +10,7 @@ resource "aws_autoscaling_group" "ec2_asg" {
 
   launch_template {
     id      = var.ec2_template_launch_id
-    version = "$Latest"
+    version = var.launch_template_latest_version
   }
   tag {
     key                 = "Name"
@@ -21,12 +21,11 @@ resource "aws_autoscaling_group" "ec2_asg" {
  lifecycle {
     create_before_destroy = true
   }
-  
+
   instance_refresh {
     strategy = "Rolling"
     preferences {
       min_healthy_percentage = 50
     }
-    triggers = ["launch_template"]
   }
 }
