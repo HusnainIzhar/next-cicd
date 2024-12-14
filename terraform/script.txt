@@ -77,7 +77,7 @@ sudo systemctl restart nginx
 
 
 
- #!/bin/bash
+              #!/bin/bash
               # Update the package list
               sudo apt update -y
               # Install Apache
