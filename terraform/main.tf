@@ -16,6 +16,10 @@ provider "aws" {
   region = var.region
 }
 
+data "aws_route53_zone" "selected" {
+  name = var.domain_name
+}
+
 module "vpc" {
   source       = "./modules/vpc"
   project_name = var.project_name
@@ -26,6 +30,13 @@ module "subnets" {
   vpc_id       = module.vpc.vpc_id
   project_name = var.project_name
   vpc_cidr_block = module.vpc.vpc_cidr_block
+}
+
+module "acm" {
+  source = "./modules/acm"
+  domain_name = var.domain_name
+  zone_id = data.aws_route53_zone.selected.zone_id
+  
 }
 
 module "security_groups" {
@@ -59,10 +70,9 @@ module "alb" {
   project_name = var.project_name
   vpc_id = module.vpc.vpc_id
   aws_internet_gateway = module.subnets.aws_internet_gateway
+  aws_acm_certificate = module.acm.aws_acm_certificate
 }
 
-
-# Attach Auto Scaling Group to Target Group
 resource "aws_autoscaling_attachment" "asg_attachment" {
   autoscaling_group_name = module.asg.asg_auto_scaling_group_id
   lb_target_group_arn    = module.alb.aws_alb_target_group_id

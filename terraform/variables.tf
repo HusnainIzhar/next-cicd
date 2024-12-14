@@ -49,3 +49,8 @@ variable "ec2_asg_var" {
     health_check_grace_period = number
   })
 }
+
+variable "domain_name" {
+  type = string
+  
+}

@@ -35,7 +35,10 @@ resource "aws_lb_target_group" "ec2_target_group" {
 resource "aws_lb_listener" "http_listener" {
   load_balancer_arn = aws_lb.couro_web_alb.arn
   port              = 80
+  #port             = 443
   protocol          = "HTTP"
+  #protocol         = "HTTPS"
+  # certificate_arn = var.aws_acm_certificate
 
   default_action {
     type             = "forward"
