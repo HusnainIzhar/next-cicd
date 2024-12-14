@@ -4,7 +4,7 @@ resource "aws_lb" "couro_web_alb" {
   internal                    = false
   load_balancer_type          = "application"
   security_groups             = [var.sg_alb]
-  subnets                     = [var.public_subnet]
+  subnets                     = var.public_subnet
   enable_deletion_protection  = false
   depends_on = [var.aws_internet_gateway  ]
 

@@ -15,7 +15,7 @@ variable "ec2_template_launch_id" {
 
 variable "private_subnet" {
   description = "The ID of the private subnet in us-east-1a"
-  type        = string
+  type        = list(string)
 }
 
 variable "project_name" {

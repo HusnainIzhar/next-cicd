@@ -6,7 +6,7 @@ resource "aws_autoscaling_group" "ec2_asg" {
   target_group_arns         = [var.aws_lb_target_group]
   health_check_type         = "EC2"
   health_check_grace_period = var.ec2_asg_var.health_check_grace_period
-  vpc_zone_identifier       = [var.private_subnet]
+  vpc_zone_identifier       = var.private_subnet
 
   launch_template {
     id      = var.ec2_template_launch_id

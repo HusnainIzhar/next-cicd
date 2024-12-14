@@ -5,7 +5,7 @@ variable "sg_alb" {
 
 variable "public_subnet" {
   description = "The ID of the public subnet in us-east-1a"
-  type        = string
+  type        = list(string)
 }
 
 variable "project_name" {
