@@ -52,6 +52,6 @@ variable "ec2_asg_var" {
 
 variable "domain_name" {
   type = string
-  default = "www.emarkrealty.com"
+  default = "emarkrealty.com"
   
 }
