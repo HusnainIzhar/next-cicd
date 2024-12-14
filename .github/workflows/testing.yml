@@ -32,24 +32,24 @@ jobs:
         working-directory: ./terraform/final copy
         run:  |
            terraform init
-             #terraform destroy -auto-approve -var-file=env/production/terraform.tfvars
-              #rm -f terraform.tfstate terraform.tfstate.backup
+             terraform destroy -auto-approve -var-file=env/production/terraform.tfvars
+              rm -f terraform.tfstate terraform.tfstate.backup
 
-      # Step 3: Validate Terraform
-      - name: Terraform Validate
-        working-directory: ./terraform/final copy
-        run: terraform validate
+      # # Step 3: Validate Terraform
+      # - name: Terraform Validate
+      #   working-directory: ./terraform/final copy
+      #   run: terraform validate
 
-      # Step 4: Generate Terraform Plan
-      - name: Terraform Plan
-        working-directory: ./terraform/final copy
-        run: terraform plan -out=tfplan -var-file=env/production/terraform.tfvars
+      # # Step 4: Generate Terraform Plan
+      # - name: Terraform Plan
+      #   working-directory: ./terraform/final copy
+      #   run: terraform plan -out=tfplan -var-file=env/production/terraform.tfvars
 
-      # Step 5: Apply Terraform Plan
-      - name: Apply with Approval
-        working-directory: ./terraform/final copy
-        run: |
-          terraform apply -auto-approve tfplan
+      # # Step 5: Apply Terraform Plan
+      # - name: Apply with Approval
+      #   working-directory: ./terraform/final copy
+      #   run: |
+      #     terraform apply -auto-approve tfplan
 
 
 
