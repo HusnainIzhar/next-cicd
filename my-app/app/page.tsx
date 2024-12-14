@@ -13,8 +13,8 @@ export default function Home() {
           priority
         />
         <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 text-blue-400">
-            This is Deployments of codej s pythosn{" "}
+          <li className="mb-2 text-yellow-400 text-5xl">
+            Welcome to Homepage {" "}
             <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
               app/page.tsx
             </code>
