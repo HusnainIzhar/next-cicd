@@ -1,3 +1,7 @@
+locals {
+  unique_id = formatdate("YYYYMMDDHHMMSS", timestamp())
+}
+
 resource "aws_launch_template" "ec2_template" {
   name          = "${var.project_name}-launch-template"
   image_id      = var.template_var.image_id
@@ -88,7 +92,7 @@ EOF'
 sudo systemctl restart nginx
 
 # Unique ID to force update
-unique_id=$(date +%Y%m%d%H%M%S)
+unique_id=${local.unique_id}
 echo "Unique ID: $unique_id"
             EOF
   )
