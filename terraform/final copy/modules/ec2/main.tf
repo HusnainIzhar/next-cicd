@@ -13,7 +13,7 @@ resource "aws_launch_template" "ec2_template" {
     associate_public_ip_address = false
   }
 
-  user_data = base64encode(templatefile("${path.module}/user-data.tpl"))
+  user_data = base64encode(templatefile("${path.module}/user-data.tpl",{project_name = var.project_name}))
 
   tags = {
     Name = "${var.project_name}-ec2-instance"

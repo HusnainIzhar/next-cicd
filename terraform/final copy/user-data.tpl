@@ -8,11 +8,12 @@
               # Enable Apache to start on boot
               sudo systemctl enable apache2
               # Get the hostname of the EC2 instance
+              NAME = $(project_name)
               HOSTNAME=$(hostname)
               # Create an HTML file that displays the instance's hostname
               echo "<html>
               <head>
-                  <title>EC2 Instance</title>
+                  <title>EC2 Instance- $$NAME</title>
               </head>
               <body>
                   <h1>Welcome to your EC2 Instance!</h1>
