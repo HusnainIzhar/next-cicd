@@ -28,9 +28,9 @@ jobs:
         working-directory: ./terraform/final copy
         run: |
           if [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
-            echo "TF_VARS=environments/production/terraform.tfvars" >> $GITHUB_ENV
+            echo "TF_VARS=env/production/terraform.tfvars" >> $GITHUB_ENV
           else
-            echo "TF_VARS=environments/staging/terraform.tfvars" >> $GITHUB_ENV
+            echo "TF_VARS=env/staging/terraform.tfvars" >> $GITHUB_ENV
           fi
 
       # Step 1: Set up Terraform
