@@ -23,7 +23,6 @@ variable "aws_internet_gateway" {
   
 }
 
-variable "aws_acm_certificate" {
-  description = "certificate"
-  
-}
+# variable "aws_acm_certificate" {
+#   description = "certificate" 
+# }
