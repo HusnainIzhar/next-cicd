@@ -18,7 +18,11 @@ resource "aws_autoscaling_group" "ec2_asg" {
     propagate_at_launch = true
   }
 
-    instance_refresh {
+ lifecycle {
+    create_before_destroy = true
+  }
+  
+  instance_refresh {
     strategy = "Rolling"
     preferences {
       min_healthy_percentage = 50
@@ -26,6 +30,3 @@ resource "aws_autoscaling_group" "ec2_asg" {
     triggers = ["launch_template"]
   }
 }
-
-
-
