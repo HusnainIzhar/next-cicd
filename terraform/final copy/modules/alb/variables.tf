@@ -20,6 +20,5 @@ variable "vpc_id" {
 
 variable "aws_internet_gateway" {
   description = "The ID of the internet gateway"
-  type        = string
   
 }

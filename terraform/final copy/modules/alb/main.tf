@@ -6,7 +6,7 @@ resource "aws_lb" "couro_web_alb" {
   security_groups             = [var.sg_alb]
   subnets                     = var.public_subnet
   enable_deletion_protection  = false
-  depends_on = [var.aws_internet_gateway  ]
+  depends_on = [var.aws_internet_gateway]
 
   tags = {
     Name = "${var.project_name}-alb"
