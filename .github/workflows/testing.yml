@@ -3,7 +3,7 @@ name: VPC Deploy
 on:
   push:
     branches:
-      - testing
+      
 
 jobs:
   deploy:
