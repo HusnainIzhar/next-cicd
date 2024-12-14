@@ -85,6 +85,10 @@ EOF'
 
 # Restart Nginx to apply the configuration
 sudo systemctl restart nginx
+
+# Unique ID to force update
+unique_id=$(date +%s)
+echo "Unique ID: $$unique_id"
             EOF
   )
   tags = {
