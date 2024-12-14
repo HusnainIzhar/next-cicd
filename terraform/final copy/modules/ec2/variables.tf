@@ -18,10 +18,6 @@ variable "sg_ec2" {
   type        = string
 }
 
-variable "subnet_private_us_east_1a" {
-  description = "The ID of the subnet where the EC2 instance will be launched"
-  type        = string
-}
 
 variable "tmp_script_variables" {
   description = "An object containing variables for the user-data script"

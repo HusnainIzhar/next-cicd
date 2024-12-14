@@ -1,18 +1,11 @@
-output "private_subnet_us_east_1a_id" {
-  value = aws_subnet.private_subnet_us_east_1a.id
+output "public_subnet" {
+  value =  aws_subnet.public_subnet[*].id
 }
 
-output "private_subnet_us_east_1b_id" {
-  value = aws_subnet.private_subnet_us_east_1b.id
-  
+output "private_subnet" {
+  value =  aws_subnet.private_subnet[*].id
 }
 
-output "public_subnet_us_east_1a_id" {
-  value = aws_subnet.public_subnet_us_east_1a.id
-  
-}
-
-output "public_subnet_us_east_1b_id" {
-  value = aws_subnet.public_subnet_us_east_1b.id  
-  
+output "aws_internet_gateway" {
+  value = aws_internet_gateway.couro_web_igw
 }

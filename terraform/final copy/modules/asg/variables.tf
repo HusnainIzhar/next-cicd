@@ -13,15 +13,9 @@ variable "ec2_template_launch_id" {
   type        = string
 }
 
-variable "private_subnet_us_east_1a" {
-  description = "The ID of the subnet"
+variable "private_subnet" {
+  description = "The ID of the private subnet in us-east-1a"
   type        = string
-}
-
-variable "private_subnet_us_east_1b" {
-  description = "The ID of the subnet"
-  type        = string
-  
 }
 
 variable "project_name" {
@@ -30,8 +24,8 @@ variable "project_name" {
   
 }
 
-variable "aws_alb_target_group_id" {
-  description = "The ID of the target group"
-
-  
+variable "aws_lb_target_group" {
+  description = "value of the target group"
+  type        = string
 }
+

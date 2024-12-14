@@ -1,15 +1,7 @@
-variable "region" {
-  description = "The AWS region with availability zones"
-  type = object({
-    a1 = string
-    b1 = string
-    c1 = string
-  })
-  default = {
-    a1 = "ap-south-1a"
-    b1 = "ap-south-1b"
-    c1 = "ap-south-1c"
-  }
+variable "availability_zone" {
+  type = list(string)
+  description = "Availability Zones"
+  default = [ "ap-south-1a","ap-south-1b" ]
 }
 
 variable "project_name" {
@@ -20,4 +12,10 @@ variable "project_name" {
 variable "vpc_id" {
   description = "The ID of the VPC"
   type        = string
+}
+
+variable "vpc_cidr_block" {
+  description = "The CIDR block of the VPC"
+  type        = string
+  
 }

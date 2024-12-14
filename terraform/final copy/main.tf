@@ -25,11 +25,13 @@ module "subnets" {
   source       = "./modules/subnets"
   vpc_id       = module.vpc.vpc_id
   project_name = var.project_name
+  vpc_cidr_block = module.vpc.vpc_cidr_block
 }
 
 module "security_groups" {
   source       = "./modules/sg"
   vpc_id       = module.vpc.vpc_id
+  
 }
 
 module "ec2" {
@@ -37,7 +39,6 @@ module "ec2" {
   template_var = var.template_var
   project_name = var.project_name
   sg_ec2  = module.security_groups.sg_ec2
-  subnet_private_us_east_1a = module.subnets.private_subnet_us_east_1a_id
   tmp_script_variables = var.tmp_script_variables
 }
 
@@ -45,20 +46,18 @@ module "asg" {
   source                     = "./modules/asg"
   ec2_asg_var = var.ec2_asg_var
   ec2_template_launch_id = module.ec2.ec2_template_launch_id
-  private_subnet_us_east_1a = module.subnets.private_subnet_us_east_1a_id
-  private_subnet_us_east_1b = module.subnets.private_subnet_us_east_1b_id
+  private_subnet = module.subnets.private_subnet
+  aws_lb_target_group = module.alb.aws_alb_target_group_id
   project_name = var.project_name
-  aws_alb_target_group_id = module.alb.aws_alb_target_group_id
 }
 
 module "alb" {
   source                        = "./modules/alb"
   sg_alb = module.security_groups.sg_alb
-  public_subnet_us_east_1a = module.subnets.public_subnet_us_east_1a_id
-  public_subnet_us_east_1b = module.subnets.public_subnet_us_east_1b_id
+  public_subnet = module.subnets.public_subnet
   project_name = var.project_name
   vpc_id = module.vpc.vpc_id
-  aws_autoscaling_group_id = module.asg.asg_auto_scaling_group_id
+  aws_internet_gateway = module.vpc.aws_internet_gateway
 }
 
 

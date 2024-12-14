@@ -3,9 +3,10 @@ resource "aws_lb" "couro_web_alb" {
   name                        = "${var.project_name}-alb"
   internal                    = false
   load_balancer_type          = "application"
-  security_groups             = [var.sg_alb] # ALB security group
-  subnets                     = [var.public_subnet_us_east_1a,var.public_subnet_us_east_1b] # Public subnets
+  security_groups             = [var.sg_alb]
+  subnets                     = [var.public_subnet]
   enable_deletion_protection  = false
+  depends_on = [var.aws_internet_gateway  ]
 
   tags = {
     Name = "${var.project_name}-alb"
@@ -15,13 +16,13 @@ resource "aws_lb" "couro_web_alb" {
 # Target Group
 resource "aws_lb_target_group" "ec2_target_group" {
   name     = "${var.project_name}-ec2-target-group"
-  port     = 3000
+  port     = 80
   protocol = "HTTP"
   vpc_id   = var.vpc_id
 
   health_check {
     path     = "/"
-    port     = "3000"
+    port     = "80"
     protocol = "HTTP"
   }
 
@@ -39,6 +40,9 @@ resource "aws_lb_listener" "http_listener" {
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.ec2_target_group.arn
+  }
+  tags = {
+    Name = "http-listener"
   }
 }
 

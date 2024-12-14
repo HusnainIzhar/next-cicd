@@ -3,13 +3,8 @@ variable "sg_alb" {
   type        = string
 }
 
-variable "public_subnet_us_east_1a" {
+variable "public_subnet" {
   description = "The ID of the public subnet in us-east-1a"
-  type        = string
-}
-
-variable "public_subnet_us_east_1b" {
-  description = "The ID of the public subnet in us-east-1b"
   type        = string
 }
 
@@ -23,7 +18,8 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "aws_autoscaling_group_id" {
-  description = "The ID of the Auto Scaling group"
-
+variable "aws_internet_gateway" {
+  description = "The ID of the internet gateway"
+  type        = string
+  
 }

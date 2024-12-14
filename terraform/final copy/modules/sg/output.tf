@@ -3,7 +3,6 @@ output "sg_ec2" {
 }
 
 output "sg_alb" {
-    value = aws_security_group.alb_sg.id
+  value = aws_security_group.alb_sg.id
   
 }
-
