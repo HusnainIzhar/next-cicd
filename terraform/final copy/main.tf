@@ -57,7 +57,7 @@ module "alb" {
   public_subnet = module.subnets.public_subnet
   project_name = var.project_name
   vpc_id = module.vpc.vpc_id
-  aws_internet_gateway = module.vpc.aws_internet_gateway
+  aws_internet_gateway = module.subnets.aws_internet_gateway
 }
 
 
