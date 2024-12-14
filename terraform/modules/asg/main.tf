@@ -43,3 +43,19 @@ resource "aws_autoscaling_policy" "target_tracking_policy" {
     target_value = 50.0
   }
 }
+
+resource "aws_cloudwatch_metric_alarm" "cpu_utilization_alarm" {
+  alarm_name          = "${var.project_name}-high-cpu"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 2
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/EC2"
+  period              = 120
+  statistic           = "Average"
+  threshold           = 80
+  alarm_description   = "This metric monitors EC2 CPU utilization"
+  alarm_actions       = []  # Optional: Add SNS topics or other actions
+  dimensions = {
+    AutoScalingGroupName = aws_autoscaling_group.ec2_asg.name
+  }
+}
