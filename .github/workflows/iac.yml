@@ -33,6 +33,15 @@ jobs:
             echo "TF_VARS=env/staging/terraform.tfvars" >> $GITHUB_ENV
           fi
 
+      # Debugging: Print Environment Variables
+      - name: Print Environment Variables
+        run: printenv
+
+      # Debugging: Check TF_VARS File
+      - name: Check TF_VARS File
+        run: cat $TF_VARS
+        working-directory: ./terraform/final copy
+
       # Step 1: Set up Terraform
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
