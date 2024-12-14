@@ -56,8 +56,8 @@ jobs:
 
        # Step 5: Backup Terraform State
       - name: Backup Terraform State
-       working-directory: ./terraform
-       run: terraform state pull > state_backup.tfstate
+        working-directory: ./terraform
+        run: terraform state pull > state_backup.tfstate
 
       - name: Wait for 10 Seconds
         run: sleep 10s 
