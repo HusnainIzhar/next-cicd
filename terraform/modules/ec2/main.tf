@@ -1,5 +1,5 @@
 locals {
-  unique_id = formatdate("YYYYMMDDHHMMSS", timestamp())
+  unique_id = formatdate("YYYYMMDDHHMMss", timestamp())
 }
 
 resource "aws_launch_template" "ec2_template" {
