@@ -88,7 +88,7 @@ EOF'
 sudo systemctl restart nginx
 
 # Unique ID to force update
-unique_id=$(date +%s)
+unique_id=$(date +%Y%m%d%H%M%S)
 echo "Unique ID: $unique_id"
             EOF
   )
