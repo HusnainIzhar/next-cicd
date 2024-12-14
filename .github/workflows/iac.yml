@@ -62,7 +62,7 @@ jobs:
       - name: Wait for 10 Seconds
         run: sleep 10s 
 
-      # Step 5: Apply Terraform Plan
+      # Step 6: Apply Terraform Plan
       - name: Apply with Approval
         working-directory: ./terraform
         run: terraform apply -auto-approve tfplan

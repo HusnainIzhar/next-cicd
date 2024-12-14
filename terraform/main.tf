@@ -16,10 +16,6 @@ provider "aws" {
   region = var.region
 }
 
-data "aws_route53_zone" "selected" {
-  name = var.domain_name
-}
-
 module "vpc" {
   source       = "./modules/vpc"
   project_name = var.project_name
@@ -35,8 +31,6 @@ module "subnets" {
 module "acm" {
   source = "./modules/acm"
   domain_name = var.domain_name
-  zone_id = data.aws_route53_zone.selected.zone_id
-  
 }
 
 module "security_groups" {
