@@ -27,9 +27,10 @@ sudo apt-get install -y nodejs
 sudo apt-get install -y nginx
 
 # Variables
-SECRET_NAME="token"
-REPO_URL="https://github.com/HusnainIzhar/next-cicd.git"
+SECRET_NAME=${var.tmp_script_variables.pat_secret_name}
+REPO_URL= ${var.tmp_script_variables.repo_url}
 APP_DIR="/home/ubuntu/app"
+BRANCH_NAME=${var.tmp_script_variables.branch_name}
 
 # Fetch the GitHub token from AWS Secrets Manager
 GITHUB_TOKEN=$(aws secretsmanager get-secret-value --secret-id $SECRET_NAME --query SecretString --output text | jq -r '.token')
@@ -43,10 +44,10 @@ if [ -d "next-cicd" ]; then
   echo "Repository already exists. Pulling latest changes..."
   cd next-cicd
   git reset --hard
-  git pull origin main
+  git pull origin $BRANCH_NAME
 else
   echo "Cloning the repository..."
-  git clone https://$GITHUB_TOKEN@github.com/HusnainIzhar/next-cicd.git
+   git clone --branch $BRANCH_NAME https://$GITHUB_TOKEN@github.com/HusnainIzhar/next-cicd.git
   cd next-cicd
 fi
 

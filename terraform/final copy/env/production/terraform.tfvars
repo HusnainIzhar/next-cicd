@@ -15,6 +15,7 @@ tmp_script_variables = {
   repo_url         = "https://github.com/HusnainIzhar/next-cicd.git"
   installation_dir = "/opt/your-app"
   app_name         = "next-cicd"
+  branch_name = "main"
 }
 ec2_asg_var = {
   desired_capacity          = 2

@@ -25,6 +25,9 @@ variable "tmp_script_variables" {
     pat_secret_name   = string  # Name of the secret in AWS Secrets Manager for GitHub token
     repo_url          = string  # GitHub repository URL
     installation_dir  = string  # Directory where the app will be installed
-    app_name          = string  # Name of the app being deployed
+    app_name          = string  
+    branch_name = string# Name of the app being deployed
   })
 }
+
+
