@@ -25,7 +25,7 @@ jobs:
 
       # Set up Environment
       - name: Set Environment
-        working-directory: ./terraform/final copy
+        working-directory: ./terraform
         run: |
           if [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
             echo "TF_VARS=env/production/terraform.tfvars" >> $GITHUB_ENV
@@ -41,17 +41,17 @@ jobs:
 
       # Step 2: Initialize Terraform
       - name: Initialize Terraform
-        working-directory: ./terraform/final copy
+        working-directory: ./terraform
         run: terraform init
 
       # Step 3: Validate Terraform
       - name: Terraform Validate
-        working-directory: ./terraform/final copy
+        working-directory: ./terraform
         run: terraform validate
 
       # Step 4: Generate Terraform Plan
       - name: Terraform Plan
-        working-directory: ./terraform/final copy
+        working-directory: ./terraform
         run: terraform plan -var-file=$TF_VARS -out=tfplan
 
       - name: Wait for 10 Seconds
@@ -59,12 +59,12 @@ jobs:
 
       # Step 5: Apply Terraform Plan
       - name: Apply with Approval
-        working-directory: ./terraform/final copy
+        working-directory: ./terraform
         run: terraform apply -auto-approve tfplan
         continue-on-error: true
 
       # Rollback Step: Revert to Last Stable State if Apply Fails
       - name: Rollback Terraform
         if: failure()
-        working-directory: ./terraform/final copy
+        working-directory: ./terraform
         run: terraform apply -auto-approve
