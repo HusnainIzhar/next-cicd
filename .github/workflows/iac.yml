@@ -42,34 +42,37 @@ jobs:
       # Step 2: Initialize Terraform
       - name: Initialize Terraform
         working-directory: ./terraform
-        run: terraform init
+        run: |
+             terraform init
+             terraform destroy -auto-approve -var-file=env/production/terraform.tfvars
+             rm -f terraform.tfstate terraform.tfstate.backup
 
-      # Step 3: Validate Terraform
-      - name: Terraform Validate
-        working-directory: ./terraform
-        run: terraform validate
+      # # Step 3: Validate Terraform
+      # - name: Terraform Validate
+      #   working-directory: ./terraform
+      #   run: terraform validate
 
-      # Step 4: Generate Terraform Plan
-      - name: Terraform Plan
-        working-directory: ./terraform
-        run: terraform plan -var-file=$TF_VARS -out=tfplan
+      # # Step 4: Generate Terraform Plan
+      # - name: Terraform Plan
+      #   working-directory: ./terraform
+      #   run: terraform plan -var-file=$TF_VARS -out=tfplan
 
-       # Step 5: Backup Terraform State
-      - name: Backup Terraform State
-        working-directory: ./terraform
-        run: terraform state pull > state_backup.tfstate
+      #  # Step 5: Backup Terraform State
+      # - name: Backup Terraform State
+      #   working-directory: ./terraform
+      #   run: terraform state pull > state_backup.tfstate
 
-      - name: Wait for 10 Seconds
-        run: sleep 10s 
+      # - name: Wait for 10 Seconds
+      #   run: sleep 10s 
 
-      # Step 6: Apply Terraform Plan
-      - name: Apply with Approval
-        working-directory: ./terraform
-        run: terraform apply -auto-approve tfplan
-        continue-on-error: true
+      # # Step 6: Apply Terraform Plan
+      # - name: Apply with Approval
+      #   working-directory: ./terraform
+      #   run: terraform apply -auto-approve tfplan
+      #   continue-on-error: true
 
-      # Rollback Step: Revert to Last Stable State if Apply Fails
-      - name: Rollback Terraform
-        if: failure()
-        working-directory: ./terraform
-        run: terraform apply -auto-approve state_backup.tfstate
+      # # Rollback Step: Revert to Last Stable State if Apply Fails
+      # - name: Rollback Terraform
+      #   if: failure()
+      #   working-directory: ./terraform
+      #   run: terraform apply -auto-approve state_backup.tfstate
