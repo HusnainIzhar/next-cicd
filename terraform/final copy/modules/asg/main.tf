@@ -17,6 +17,14 @@ resource "aws_autoscaling_group" "ec2_asg" {
     value               = "${var.project_name}-ec2-instance"
     propagate_at_launch = true
   }
+
+    instance_refresh {
+    strategy = "Rolling"
+    preferences {
+      min_healthy_percentage = 50
+    }
+    triggers = ["launch_template"]
+  }
 }
 
 

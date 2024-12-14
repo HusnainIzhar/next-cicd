@@ -92,7 +92,9 @@ unique_id=$(date +%s)
 echo "Unique ID: $$unique_id"
             EOF
   )
+
   tags = {
     Name = "${var.project_name}-ec2-instance"
   }
+
 }
