@@ -1,0 +1,40 @@
+name: Main Pipeline - CI/CD
+
+on:
+  pull_request:
+    types: [closed]
+    branches: ["main","production"]
+    paths:
+      - '**/*.tf'
+      - '**/*.tfvars'
+      - 'src/**'
+      - '.github/workflows/*.yml'
+      - './'
+
+  workflow_dispatch:
+
+jobs:
+  ci-test:
+    if: github.event.pull_request.merged == true
+    uses: ./.github/workflows/ci.yml
+
+  sync-staging:
+    if: >
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref == 'main'
+    needs: ci-test
+    uses: ./.github/workflows/sync.yml
+
+  terraform-main:
+    if: >
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref == 'main'
+    needs: sync-staging
+    uses: ./.github/workflows/ci.yml
+
+  terraform-production:
+    if: >
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref == 'production'
+    needs: ci-test
+    uses: ./.github/workflows/ci.yml
