@@ -13,6 +13,9 @@ on:
 
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   ci-test:
     if: github.event.pull_request.merged == true
