@@ -3,9 +3,6 @@ name: Merge to Staging
 on:
     workflow_call:
 
-permissions:
-  contents: write
-
 jobs:
   merge_and_push:
     runs-on: ubuntu-latest
